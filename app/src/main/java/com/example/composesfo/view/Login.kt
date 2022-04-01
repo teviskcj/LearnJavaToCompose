@@ -29,6 +29,7 @@ import androidx.constraintlayout.compose.Dimension
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.composesfo.R
+import com.example.composesfo.navigation.Screen
 
 @Composable
 fun LoginScreen(
@@ -109,7 +110,7 @@ fun LoginScreen(
             )
 
             Button(
-                onClick = { /*TODO*/ },
+                onClick = { navController.navigate(route = Screen.HomeScreen.route) },
                 modifier = Modifier
                     .height(60.dp)
                     .layoutId("loginButton")

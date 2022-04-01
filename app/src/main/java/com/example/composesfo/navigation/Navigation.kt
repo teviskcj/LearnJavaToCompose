@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.composesfo.view.HomeScreen
 import com.example.composesfo.view.LoginScreen
 import com.example.composesfo.view.RegisterScreen
 
@@ -20,6 +21,9 @@ fun Navigation() {
         }
         composable(Screen.LoginScreen.route) {
             LoginScreen(navController = navController)
+        }
+        composable(Screen.HomeScreen.route) {
+            HomeScreen()
         }
     }
 }
