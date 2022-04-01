@@ -1,13 +1,14 @@
-package com.example.composesfo
+package com.example.composesfo.view
 
-import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
+import com.example.composesfo.R
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material.icons.filled.Lock
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Phone
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -23,22 +24,15 @@ import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ChainStyle
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
+import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import com.example.composesfo.navigation.Navigation
+import com.example.composesfo.navigation.Screen
 import com.example.composesfo.ui.theme.ComposeSFOTheme
-import com.example.composesfo.view.RegisterScreen
 
-class MainActivity : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContent {
-                Navigation()
-        }
-    }
-}
-
-/*@Composable
-fun RegisterScreen() {
+@Composable
+fun RegisterScreen(
+    navController: NavController
+) {
     Surface(color = Color.White) {
         ConstraintLayout(
             modifier = Modifier.fillMaxSize()
@@ -72,7 +66,7 @@ fun RegisterScreen() {
 
             // navigator
             Button(
-                onClick = { *//*TODO*//* },
+                onClick = { navController.navigate(route = Screen.LoginScreen.route) },
                 modifier = Modifier
                     .height(60.dp)
                     .width(150.dp)
@@ -89,7 +83,7 @@ fun RegisterScreen() {
             }
 
             Button(
-                onClick = { *//*TODO*//* },
+                onClick = { /*TODO*/ },
                 enabled = false,
                 modifier = Modifier
                     .height(60.dp)
@@ -159,7 +153,7 @@ fun RegisterScreen() {
             )
 
             Button(
-                onClick = { *//*TODO*//* },
+                onClick = { /*TODO*/ },
                 modifier = Modifier
                     .height(60.dp)
                     .constrainAs(registerButton) {
@@ -177,14 +171,12 @@ fun RegisterScreen() {
             }
         }
     }
-}*/
-
+}
 
 @Preview(showBackground = true)
 @Composable
-fun DefaultPreview() {
+fun RegisterScreenPreview() {
     ComposeSFOTheme {
-        //RegisterScreen(navController = rememberNavController())
-        Navigation()
+        RegisterScreen(navController = rememberNavController())
     }
 }
