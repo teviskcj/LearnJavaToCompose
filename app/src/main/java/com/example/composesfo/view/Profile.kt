@@ -1,5 +1,6 @@
 package com.example.composesfo.view
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Icon
 import androidx.compose.material.Surface
@@ -17,11 +18,15 @@ import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ChainStyle
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.ConstraintSet
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
+import com.example.composesfo.navigation.Screen
 import com.example.composesfo.ui.theme.AllButton
 
-@Preview(showBackground = true)
 @Composable
-fun ProfileScreen() {
+fun ProfileScreen(
+    navController: NavController
+) {
     Surface(color = Color.White) {
         ConstraintLayout(modifier = Modifier.fillMaxSize(),
             constraintSet = profileScreenConstraintSet()
@@ -32,7 +37,10 @@ fun ProfileScreen() {
             ) {
                 Box(modifier = Modifier
                     .size(150.dp)
-                    .aspectRatio(1f),
+                    .aspectRatio(1f)
+                    .clickable (
+                        onClick = { navController.navigate(route = Screen.EditProfileScreen.route) }
+                    ),
                     contentAlignment = Alignment.Center
                 ) {
                     Column(verticalArrangement = Arrangement.Center,
@@ -84,7 +92,10 @@ fun ProfileScreen() {
             ) {
                 Box(modifier = Modifier
                     .size(150.dp)
-                    .aspectRatio(1f),
+                    .aspectRatio(1f)
+                    .clickable (
+                        onClick = { navController.navigate(route = Screen.LanguageScreen.route) }
+                    ),
                     contentAlignment = Alignment.Center
                 ) {
                     Column(verticalArrangement = Arrangement.Center,
@@ -136,7 +147,10 @@ fun ProfileScreen() {
             ) {
                 Box(modifier = Modifier
                     .size(150.dp)
-                    .aspectRatio(1f),
+                    .aspectRatio(1f)
+                    .clickable (
+                        onClick = { navController.navigate(route = Screen.QuestionsScreen.route) }
+                    ),
                     contentAlignment = Alignment.Center
                 ) {
                     Column(verticalArrangement = Arrangement.Center,
@@ -162,7 +176,10 @@ fun ProfileScreen() {
             ) {
                 Box(modifier = Modifier
                     .size(150.dp)
-                    .aspectRatio(1f),
+                    .aspectRatio(1f)
+                    .clickable (
+                        onClick = { navController.popBackStack() }
+                    ),
                     contentAlignment = Alignment.Center
                 ) {
                     Column(verticalArrangement = Arrangement.Center,
@@ -256,4 +273,10 @@ private fun profileScreenConstraintSet() : ConstraintSet {
             chainStyle = ChainStyle.Spread
         )
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun ProfileScreenPreview() {
+    ProfileScreen(navController = rememberNavController())
 }

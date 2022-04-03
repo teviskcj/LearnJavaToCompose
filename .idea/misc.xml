@@ -10,6 +10,8 @@
         <entry key="../../../../layout/compose-model-1648790731159.xml" value="0.5972222222222222" />
         <entry key="../../../../layout/compose-model-1648793924544.xml" value="0.32094594594594594" />
         <entry key="../../../../layout/compose-model-1648800762773.xml" value="0.32094594594594594" />
+        <entry key="..\:/AndroidComposeProject/LearnJavaToCompose/app/src/main/res/drawable/ic_profile.xml" value="0.124" />
+        <entry key="..\:/AndroidComposeProject/LearnJavaToCompose/app/src/main/res/drawable/ic_qr_code.xml" value="0.252" />
         <entry key="app/src/main/res/drawable/ic_menu_book.xml" value="0.203" />
         <entry key="app/src/main/res/drawable/ic_profile.xml" value="0.203" />
         <entry key="app/src/main/res/drawable/ic_shopping_cart.xml" value="0.203" />
@@ -17,7 +19,7 @@
       </map>
     </option>
   </component>
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="Android Studio default JDK" project-jdk-type="JavaSDK">
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="1.8" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/build/classes" />
   </component>
   <component name="ProjectType">

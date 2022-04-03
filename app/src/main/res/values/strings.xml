@@ -3,4 +3,8 @@
     <string name="name">Name</string>
     <string name="phone_number">Phone Number</string>
     <string name="password">Password</string>
+    <string name="profile_name">Profile Name</string>
+    <string name="new_password">New Password</string>
+    <string name="question_one">Where is your parents met?</string>
+    <string name="question_two">What is your favourite food?</string>
 </resources>

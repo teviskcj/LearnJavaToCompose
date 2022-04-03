@@ -4,9 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.composesfo.view.HomeScreen
-import com.example.composesfo.view.LoginScreen
-import com.example.composesfo.view.RegisterScreen
+import com.example.composesfo.view.*
 
 @Composable
 fun Navigation() {
@@ -23,7 +21,19 @@ fun Navigation() {
             LoginScreen(navController = navController)
         }
         composable(Screen.HomeScreen.route) {
-            HomeScreen()
+            HomeScreen(navController = navController)
+        }
+        composable(Screen.ProfileScreen.route) {
+            ProfileScreen(navController = navController)
+        }
+        composable(Screen.EditProfileScreen.route) {
+            EditProfileScreen(navController = navController)
+        }
+        composable(Screen.LanguageScreen.route) {
+            LanguageScreen(navController = navController)
+        }
+        composable(Screen.QuestionsScreen.route) {
+            QuestionsScreen(navController = navController)
         }
     }
 }

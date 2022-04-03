@@ -13,12 +13,15 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.example.composesfo.R
 import com.example.composesfo.ui.theme.AllButton
 
-@Preview(showBackground = true)
 @Composable
-fun HomeScreen() {
+fun HomeScreen(
+    navController: NavController
+) {
     val sectionState = remember { mutableStateOf(BottomBarSection.Home) }
     val navItems = BottomBarSection.values().toList()
 
@@ -41,7 +44,7 @@ fun HomeScreen() {
                 BottomBarSection.Home -> MenuScreen()
                 BottomBarSection.Cart -> CartScreen()
                 BottomBarSection.Wallet -> WalletScreen()
-                BottomBarSection.Profile -> ProfileScreen()
+                BottomBarSection.Profile -> ProfileScreen(navController)
             }
         }
     }
@@ -88,4 +91,10 @@ private enum class BottomBarSection(
     Cart(R.drawable.ic_shopping_cart, R.drawable.ic_shopping_cart),
     Wallet(R.drawable.ic_wallet, R.drawable.ic_wallet),
     Profile(R.drawable.ic_profile, R.drawable.ic_profile)
+}
+
+@Preview(showBackground = true)
+@Composable
+fun HomeScreenPreview() {
+    HomeScreen(navController = rememberNavController())
 }
