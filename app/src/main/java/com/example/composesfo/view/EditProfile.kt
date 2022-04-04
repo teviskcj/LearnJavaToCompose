@@ -20,6 +20,7 @@ import androidx.constraintlayout.compose.Dimension
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.composesfo.R
+import com.example.composesfo.navigation.Screen
 import com.example.composesfo.ui.theme.AllButton
 
 @Composable
@@ -105,7 +106,11 @@ fun EditProfileScreen(
             }
 
             Button(
-                onClick = { navController.popBackStack() },
+                onClick = {
+                    navController.navigate(Screen.ProfileScreen.route) {
+                        navController.backQueue.clear()
+                    }
+                },
                 modifier = Modifier
                     .height(60.dp)
                     .layoutId("editButton")

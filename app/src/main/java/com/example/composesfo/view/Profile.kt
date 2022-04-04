@@ -66,7 +66,10 @@ fun ProfileScreen(
             ) {
                 Box(modifier = Modifier
                     .size(150.dp)
-                    .aspectRatio(1f),
+                    .aspectRatio(1f)
+                    .clickable (
+                        onClick = { navController.navigate(route = Screen.OrderScreen.route) }
+                    ),
                     contentAlignment = Alignment.Center
                 ) {
                     Column(verticalArrangement = Arrangement.Center,
@@ -121,7 +124,10 @@ fun ProfileScreen(
             ) {
                 Box(modifier = Modifier
                     .size(150.dp)
-                    .aspectRatio(1f),
+                    .aspectRatio(1f)
+                    .clickable (
+                        onClick = { navController.navigate(route = Screen.TranslatorScreen.route) }
+                    ),
                     contentAlignment = Alignment.Center
                 ) {
                     Column(verticalArrangement = Arrangement.Center,
@@ -178,7 +184,11 @@ fun ProfileScreen(
                     .size(150.dp)
                     .aspectRatio(1f)
                     .clickable (
-                        onClick = { navController.popBackStack() }
+                        onClick = {
+                            navController.navigate(Screen.LoginScreen.route) {
+                                navController.backQueue.clear()
+                            }
+                        },
                     ),
                     contentAlignment = Alignment.Center
                 ) {

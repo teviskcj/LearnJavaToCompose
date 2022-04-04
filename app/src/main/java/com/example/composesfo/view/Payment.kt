@@ -13,7 +13,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -26,7 +25,7 @@ import com.example.composesfo.R
 import com.example.composesfo.navigation.Screen
 
 @Composable
-fun QuestionsScreen(
+fun PaymentScreen(
     navController: NavController
 ) {
     Surface(color = Color.White) {
@@ -34,47 +33,51 @@ fun QuestionsScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(16.dp),
-            constraintSet = questionsScreenConstraintSet()
+            constraintSet = paymentScreenConstraintSet()
         ) {
-            Text(
-                text = "Please set Answer for the Following Security Questions?",
-                textAlign = TextAlign.Center,
-                fontSize = 28.sp,
-                modifier = Modifier.layoutId("questionText")
-            )
 
-            val answerOne = remember { mutableStateOf("") }
-            val answerTwo = remember { mutableStateOf("") }
+            val inputName = remember { mutableStateOf("") }
+            val inputPhone = remember { mutableStateOf("") }
+            val inputAddress = remember { mutableStateOf("") }
             OutlinedTextField(
-                value = answerOne.value,
-                onValueChange = { answerOne.value = it },
-                placeholder = { stringResource(R.string.question_one) },
+                value = inputName.value,
+                onValueChange = { inputName.value = it },
+                label = { stringResource(R.string.your_name) },
                 singleLine = true,
                 trailingIcon = { Icon(Icons.Filled.Clear, null) },
-                modifier = Modifier.layoutId("inputQuestionOne")
+                modifier = Modifier.layoutId("inputName")
             )
 
             OutlinedTextField(
-                value = answerTwo.value,
-                onValueChange = { answerTwo.value = it },
-                placeholder = { stringResource(R.string.question_two) },
+                value = inputPhone.value,
+                onValueChange = { inputPhone.value = it },
+                label = { stringResource(R.string.your_phone) },
                 singleLine = true,
                 trailingIcon = { Icon(Icons.Filled.Clear, null) },
-                modifier = Modifier.layoutId("inputQuestionTwo")
+                modifier = Modifier.layoutId("inputPhone")
+            )
+
+            OutlinedTextField(
+                value = inputAddress.value,
+                onValueChange = { inputAddress.value = it },
+                label = { stringResource(R.string.your_address) },
+                singleLine = true,
+                trailingIcon = { Icon(Icons.Filled.Clear, null) },
+                modifier = Modifier.layoutId("inputAddress")
             )
 
             Button(
                 onClick = {
-                    navController.navigate(Screen.ProfileScreen.route) {
+                    navController.navigate(Screen.HomeScreen.route){
                         navController.backQueue.clear()
                     }
-                },
+                          },
                 modifier = Modifier
                     .height(60.dp)
                     .layoutId("setButton")
             ) {
                 Text(
-                    text = "SET",
+                    text = "PROCEED TO PAYMENT",
                     fontSize = 22.sp
                 )
             }
@@ -82,29 +85,29 @@ fun QuestionsScreen(
     }
 }
 
-private fun questionsScreenConstraintSet(): ConstraintSet {
+private fun paymentScreenConstraintSet(): ConstraintSet {
     return ConstraintSet{
-        val questionText = createRefFor("questionText")
-        val inputQuestionOne = createRefFor("inputQuestionOne")
-        val inputQuestionTwo = createRefFor("inputQuestionTwo")
-        val setButton = createRefFor("setButton")
+        val inputName = createRefFor("inputName")
+        val inputPhone = createRefFor("inputPhone")
+        val inputAddress = createRefFor("inputAddress")
+        val confirmButton = createRefFor("setButton")
 
-        constrain(questionText) {
+        constrain(inputName) {
             top.linkTo(parent.top, 30.dp)
             centerHorizontallyTo(parent)
         }
 
-        constrain(inputQuestionOne) {
-            top.linkTo(questionText.bottom, 50.dp)
+        constrain(inputPhone) {
+            top.linkTo(inputName.bottom, 30.dp)
             centerHorizontallyTo(parent)
         }
 
-        constrain(inputQuestionTwo) {
-            top.linkTo(inputQuestionOne.bottom, 30.dp)
+        constrain(inputAddress) {
+            top.linkTo(inputPhone.bottom, 30.dp)
             centerHorizontallyTo(parent)
         }
 
-        constrain(setButton) {
+        constrain(confirmButton) {
             bottom.linkTo(parent.bottom, 30.dp)
             centerHorizontallyTo(parent)
             width = Dimension.fillToConstraints
@@ -114,6 +117,6 @@ private fun questionsScreenConstraintSet(): ConstraintSet {
 
 @Preview(showBackground = true)
 @Composable
-fun QuestionsScreenPreview() {
-    QuestionsScreen(navController = rememberNavController())
+fun PaymentScreenPreview() {
+    PaymentScreen(navController = rememberNavController())
 }

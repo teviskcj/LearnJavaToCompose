@@ -153,7 +153,11 @@ fun RegisterScreen(
             )
 
             Button(
-                onClick = { navController.navigate(route = Screen.HomeScreen.route) },
+                onClick = {
+                    navController.navigate(route = Screen.HomeScreen.route) {
+                        navController.backQueue.clear()
+                    }
+                          },
                 modifier = Modifier
                     .height(60.dp)
                     .constrainAs(registerButton) {

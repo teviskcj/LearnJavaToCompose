@@ -7,4 +7,14 @@
     <string name="new_password">New Password</string>
     <string name="question_one">Where is your parents met?</string>
     <string name="question_two">What is your favourite food?</string>
+    <string name="enter_word">Enter Word</string>
+
+    <string name="card_holder_name">Card holder name</string>
+    <string name="card_holder_number">Card number</string>
+    <string name="expiry_date">Expiry date</string>
+    <string name="cvc">CVC</string>
+    <string name="save">save</string>
+    <string name="your_name">Your Name</string>
+    <string name="your_phone">your Phone Number</string>
+    <string name="your_address">Your Home Address</string>
 </resources>

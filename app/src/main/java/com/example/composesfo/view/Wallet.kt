@@ -18,11 +18,15 @@ import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.ConstraintSet
 import androidx.constraintlayout.compose.Dimension
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.example.composesfo.R
+import com.example.composesfo.navigation.Screen
 
-@Preview(showBackground = true)
 @Composable
-fun WalletScreen() {
+fun WalletScreen(
+    navController: NavController
+) {
     Surface(color = Color.White) {
         ConstraintLayout(modifier = Modifier
             .fillMaxSize()
@@ -80,7 +84,7 @@ fun WalletScreen() {
             }
 
             Button(
-                onClick = {  },
+                onClick = { navController.navigate(route = Screen.ReloadFormScreen.route) },
                 modifier = Modifier
                     .height(60.dp)
                     .layoutId("reloadTen")
@@ -92,7 +96,7 @@ fun WalletScreen() {
             }
 
             Button(
-                onClick = {  },
+                onClick = { navController.navigate(route = Screen.ReloadFormScreen.route) },
                 modifier = Modifier
                     .height(60.dp)
                     .layoutId("reloadTwenty")
@@ -104,7 +108,7 @@ fun WalletScreen() {
             }
 
             Button(
-                onClick = {  },
+                onClick = { navController.navigate(route = Screen.ReloadFormScreen.route) },
                 modifier = Modifier
                     .height(60.dp)
                     .layoutId("reloadFifty")
@@ -116,7 +120,7 @@ fun WalletScreen() {
             }
 
             Button(
-                onClick = {  },
+                onClick = { navController.navigate(route = Screen.ReloadFormScreen.route) },
                 modifier = Modifier
                     .height(60.dp)
                     .layoutId("reloadHundred")
@@ -204,4 +208,10 @@ private fun walletScreenConstraintSet(): ConstraintSet {
             width = Dimension.fillToConstraints
         }
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun WalletScreenPreview() {
+    WalletScreen(navController = rememberNavController())
 }

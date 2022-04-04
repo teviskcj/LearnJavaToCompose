@@ -2,6 +2,8 @@ package com.example.composesfo.view
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Button
 import androidx.compose.material.Card
 import androidx.compose.material.Surface
@@ -16,11 +18,15 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.ConstraintSet
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
+import com.example.composesfo.navigation.Screen
 import com.example.composesfo.ui.theme.AllButton
 
-@Preview(showBackground = true)
 @Composable
-fun CartScreen() {
+fun CartScreen(
+    navController: NavController
+) {
     Surface(color = Color.White) {
         ConstraintLayout(modifier = Modifier
             .fillMaxSize()
@@ -33,8 +39,18 @@ fun CartScreen() {
                 modifier = Modifier.layoutId("totalText")
             )
 
+            LazyColumn(
+                modifier = Modifier
+                    .layoutId("cartList")
+
+            ) {
+                items(count = 3){
+                    CartItemCard("Food Name", 0,0)
+                }
+
+            }
             Button(
-                onClick = {  },
+                onClick = { navController.navigate(Screen.PaymentScreen.route) },
                 modifier = Modifier
                     .height(60.dp)
                     .layoutId("orderButton")
@@ -49,20 +65,38 @@ fun CartScreen() {
 }
 
 @Composable
-fun cartItemCard(foodName: String = "Food Name", quantity: Int =0, price: Int =0) {
+fun CartItemCard(foodName: String, quantity: Int, price: Int) {
         Card(backgroundColor = AllButton, 
             modifier = Modifier
                 .padding(24.dp)
                 .fillMaxWidth()
-                .clickable {  }
-                .padding(top = 20.dp, bottom = 20.dp)
+                .clickable { }
         ) {
-            Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                Row(horizontalArrangement = Arrangement.SpaceBetween) {
-                    Text(text = foodName)
-                    Text(text = quantity.toString())
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier.padding(10.dp)
+            ) {
+                Row(
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                ) {
+                    Text(
+                        text = foodName,
+                        color = Color.White,
+                        fontSize = 18.sp)
+
+                    Text(
+                        text = "Quantity = $quantity",
+                        color = Color.White,
+                        fontSize = 18.sp
+                    )
                 }
-                Text(text = price.toString())
+                Text(
+                    text = "Price: $price.00 MYR",
+                    color = Color.White,
+                    fontSize = 18.sp
+                )
             }
 
             
@@ -72,11 +106,16 @@ fun cartItemCard(foodName: String = "Food Name", quantity: Int =0, price: Int =0
 private fun cartScreenConstraintSet(): ConstraintSet {
     return ConstraintSet() {
         val totalText =  createRefFor("totalText")
+        val cartList = createRefFor("cartList")
         val orderButton = createRefFor("orderButton")
 
         constrain(totalText) {
             top.linkTo(parent.top, 20.dp)
             centerHorizontallyTo(parent)
+        }
+
+        constrain(cartList) {
+            top.linkTo(totalText.bottom, 20.dp)
         }
 
         constrain(orderButton) {
@@ -86,4 +125,10 @@ private fun cartScreenConstraintSet(): ConstraintSet {
             centerHorizontallyTo(parent)
         }
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun CartScreenPreview() {
+    CartScreen(navController = rememberNavController())
 }

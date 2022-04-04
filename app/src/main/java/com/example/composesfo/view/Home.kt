@@ -41,9 +41,9 @@ fun HomeScreen(
             targetState = sectionState.value
         ) { section ->
             when (section) {
-                BottomBarSection.Home -> MenuScreen()
-                BottomBarSection.Cart -> CartScreen()
-                BottomBarSection.Wallet -> WalletScreen()
+                BottomBarSection.Home -> MenuScreen(navController)
+                BottomBarSection.Cart -> CartScreen(navController)
+                BottomBarSection.Wallet -> WalletScreen(navController)
                 BottomBarSection.Profile -> ProfileScreen(navController)
             }
         }

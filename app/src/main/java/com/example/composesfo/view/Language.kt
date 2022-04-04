@@ -20,6 +20,7 @@ import androidx.constraintlayout.compose.ConstraintSet
 import androidx.constraintlayout.compose.Dimension
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.example.composesfo.navigation.Screen
 
 @Composable
 fun LanguageScreen(
@@ -53,7 +54,11 @@ fun LanguageScreen(
             }
 
             Button(
-                onClick = { navController.popBackStack() },
+                onClick = {
+                    navController.navigate(Screen.ProfileScreen.route) {
+                        navController.backQueue.clear()
+                    }
+                },
                 modifier = Modifier
                     .height(60.dp)
                     .layoutId("chineseButton")
