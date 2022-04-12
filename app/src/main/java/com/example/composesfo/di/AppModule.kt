@@ -3,7 +3,9 @@ package com.example.composesfo.di
 import com.example.composesfo.common.Constants
 import com.example.composesfo.data.remote.SFOApi
 import com.example.composesfo.data.repository.FoodRepositoryImpl
+import com.example.composesfo.data.repository.UserRepositoryImpl
 import com.example.composesfo.domain.repository.FoodRepository
+import com.example.composesfo.domain.repository.UserRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -30,5 +32,11 @@ object AppModule {
     @Singleton
     fun provideFoodRepository(api: SFOApi): FoodRepository {
         return FoodRepositoryImpl(api)
+    }
+
+    @Provides
+    @Singleton
+    fun provideUserRepository(api: SFOApi): UserRepository {
+        return UserRepositoryImpl(api)
     }
 }

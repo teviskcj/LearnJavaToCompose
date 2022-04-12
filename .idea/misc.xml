@@ -36,11 +36,15 @@
         <entry key="../../../../layout/compose-model-1649060197534.xml" value="0.32010135135135137" />
         <entry key="../../../../layout/compose-model-1649061492670.xml" value="0.32010135135135137" />
         <entry key="../../../../layout/compose-model-1649062339053.xml" value="0.32010135135135137" />
+        <entry key="../../../../layout/compose-model-1649757028548.xml" value="0.1" />
         <entry key="..\:/AndroidComposeProject/LearnJavaToCompose/app/src/main/res/drawable/ic_profile.xml" value="0.124" />
         <entry key="..\:/AndroidComposeProject/LearnJavaToCompose/app/src/main/res/drawable/ic_qr_code.xml" value="0.252" />
+        <entry key="app/src/main/res/drawable/ic_clear.xml" value="0.1915" />
         <entry key="app/src/main/res/drawable/ic_menu_book.xml" value="0.203" />
         <entry key="app/src/main/res/drawable/ic_profile.xml" value="0.203" />
         <entry key="app/src/main/res/drawable/ic_shopping_cart.xml" value="0.203" />
+        <entry key="app/src/main/res/drawable/ic_visibility.xml" value="0.1915" />
+        <entry key="app/src/main/res/drawable/ic_visibility_off_24.xml" value="0.1915" />
         <entry key="app/src/main/res/drawable/ic_voice.xml" value="0.3225" />
         <entry key="app/src/main/res/drawable/ic_wallet.xml" value="0.203" />
       </map>

@@ -1,8 +1,7 @@
-package com.example.composesfo.presentation.view
+package com.example.composesfo.presentation.foodMenu
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -11,7 +10,7 @@ import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Divider
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -29,46 +28,29 @@ import androidx.navigation.compose.rememberNavController
 import coil.compose.rememberImagePainter
 import com.example.composesfo.R
 import com.example.composesfo.domain.model.Food
-import com.example.composesfo.presentation.foodMenu.FoodListState
-import com.example.composesfo.presentation.foodMenu.FoodListViewModel
+import com.example.composesfo.presentation.component.noRippleClickable
 import com.example.composesfo.presentation.navigation.Screen
-import com.example.composesfo.presentation.ui.theme.AllButton
 
 @Composable
 fun MenuScreen(
     navController: NavController,
     viewModel: FoodListViewModel = hiltViewModel()
 ) {
+    val state = viewModel.state.value
+    val foodTypeList = foodType()
+
     Box(modifier = Modifier
         .fillMaxSize()) {
         Column(modifier = Modifier.padding(16.dp)) {
-            val state = viewModel.state.value
-            val foodTypeList = foodType()
 
             TopAppBarHeader()
             Spacer(modifier = Modifier.padding(10.dp))
-            TypeList(list = foodTypeList)
+            TypeList(foodTypeList, viewModel)
             Spacer(modifier = Modifier.padding(20.dp))
             FoodList(state, navController)
 
-            if (state.error.isNotBlank()) {
-                Text(
-                    text = state.error,
-                    color = MaterialTheme.colors.error,
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 20.dp)
-                )
-            }
-            if (state.isLoading) {
-                Box(
-                    contentAlignment = Alignment.Center,
-                    modifier = Modifier.fillMaxSize()
-                ) {
-                    CircularProgressIndicator()
-                }
-            }
+            IsStateError(state)
+            IsStateLoading(state)
         }
     }
 }
@@ -96,33 +78,25 @@ private fun foodType(): List<String> {
 }
 
 @Composable
-fun TypeList(list: List<String>) {
-    var selectedOption by remember {
-        mutableStateOf(list[0])
-    }
-    val onSelectionChange = { text: String ->
-        selectedOption = text
-    }
+fun TypeList(list: List<String>, viewModel: FoodListViewModel) {
 
     Row(
         modifier = Modifier
             .padding(0.dp, 8.dp),
     ) {
         list.forEach { text ->
-            Column(modifier = Modifier
+            Column(
+                modifier = Modifier
                 .padding(0.dp, 4.dp, 12.dp, 4.dp)
-                .width(IntrinsicSize.Max)) {
+                .width(IntrinsicSize.Max)
+            ) {
                 Text(
                     text = text,
-                    color = if (text == selectedOption) {
-                        AllButton
-                    } else {
-                        Color.LightGray
-                    },
+                    color = viewModel.getColor(text),
                     modifier = Modifier
-                        .clickable {
-                            onSelectionChange(text)
-                        },
+                        .noRippleClickable {
+                            viewModel.onTypeChange(text)
+                        }
                 )
                 Box(
                     modifier = Modifier
@@ -133,11 +107,7 @@ fun TypeList(list: List<String>) {
                             RoundedCornerShape(1.dp)
                         )
                         .background(
-                            if (text == selectedOption) {
-                                AllButton
-                            } else {
-                                Color.LightGray
-                            }
+                            viewModel.getColor(text)
                         )
                 )
             }
@@ -167,9 +137,8 @@ fun FoodListItem(
     onItemClick: (Food) -> Unit
 ) {
     Row(
-        modifier = Modifier.clickable(
-            onClick = { onItemClick(food) }
-        )
+        modifier = Modifier
+            .noRippleClickable(onClick = { onItemClick(food) })
     ) {
         Column(
             modifier = Modifier.fillMaxWidth(),
@@ -200,7 +169,7 @@ fun FoodListItem(
             )
 
             Text(
-                text = food.foodPrice,
+                text = "RM ${food.foodPrice}.00",
                 textAlign = TextAlign.Center,
                 fontSize = 18.sp
             )
@@ -213,12 +182,40 @@ fun FoodListItem(
 
 
             Divider(
-                color = Color.Gray,
+                color = Color.LightGray,
                 modifier = Modifier.padding(top = 10.dp, bottom = 10.dp)
             )
         }
     }
 }
+
+@Composable
+fun IsStateError(state: FoodListState) {
+    if (state.error.isNotBlank()) {
+        Text(
+            text = state.error,
+            color = MaterialTheme.colors.error,
+            textAlign = TextAlign.Center,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 20.dp)
+        )
+    }
+}
+
+@Composable
+fun IsStateLoading(state: FoodListState) {
+    if (state.isLoading) {
+        Box(
+            contentAlignment = Alignment.Center,
+            modifier = Modifier.fillMaxSize()
+        ) {
+            CircularProgressIndicator()
+        }
+    }
+}
+
+
 
 @Preview(showBackground = true)
 @Composable

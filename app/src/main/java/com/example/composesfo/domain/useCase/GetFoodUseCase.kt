@@ -1,4 +1,4 @@
-package com.example.composesfo.domain.useCase.getFood
+package com.example.composesfo.domain.useCase
 
 import com.example.composesfo.common.Resource
 import com.example.composesfo.data.remote.dto.toFood
