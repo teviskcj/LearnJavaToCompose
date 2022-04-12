@@ -16,7 +16,8 @@ class GetFoodsUseCase @Inject constructor(
     operator fun invoke(): Flow<Resource<List<Food>>> = flow {
         try {
             emit(Resource.Loading<List<Food>>())
-            val foods = repository.getFoods().map { it.toFood() }
+            val list = repository.getFoods().values
+            val foods = list.map { it.toFood() }
             emit(Resource.Success<List<Food>>(foods))
         } catch (e: HttpException) {
             emit(Resource.Error<List<Food>>(e.localizedMessage ?: "An unexpected error occurred"))

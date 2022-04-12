@@ -8,7 +8,7 @@ import javax.inject.Inject
 class FoodRepositoryImpl @Inject constructor(
     private val api: SFOApi
 ) : FoodRepository {
-    override suspend fun getFoods(): List<FoodDto> {
+    override suspend fun getFoods(): Map<String, FoodDto> {
         return api.getFoods()
     }
 

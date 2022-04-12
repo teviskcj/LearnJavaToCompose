@@ -1,32 +1,35 @@
 package com.example.composesfo.presentation.view
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.border
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.*
-import androidx.compose.runtime.Composable
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.CircularProgressIndicator
+import androidx.compose.material.Divider
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Text
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.layoutId
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.constraintlayout.compose.ConstraintLayout
-import androidx.constraintlayout.compose.ConstraintSet
-import androidx.constraintlayout.compose.Dimension
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import coil.compose.rememberImagePainter
 import com.example.composesfo.R
 import com.example.composesfo.domain.model.Food
+import com.example.composesfo.presentation.foodMenu.FoodListState
 import com.example.composesfo.presentation.foodMenu.FoodListViewModel
 import com.example.composesfo.presentation.navigation.Screen
 import com.example.composesfo.presentation.ui.theme.AllButton
@@ -36,63 +39,17 @@ fun MenuScreen(
     navController: NavController,
     viewModel: FoodListViewModel = hiltViewModel()
 ) {
-    val state = viewModel.state.value
+    Box(modifier = Modifier
+        .fillMaxSize()) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            val state = viewModel.state.value
+            val foodTypeList = foodType()
 
-    val foodTypeList = foodType()
-
-    Surface(color = Color.White) {
-        ConstraintLayout(modifier = Modifier
-            .fillMaxSize()
-            .padding(12.dp),
-            constraintSet = menuScreenConstraintSet()
-        ) {
-            Text(
-                text = "Food Menu",
-                fontWeight = FontWeight.Bold,
-                fontSize = 30.sp,
-                modifier = Modifier.layoutId("menuText")
-            )
-
-            LazyRow(
-                modifier = Modifier.layoutId("typeList"),
-                horizontalArrangement = Arrangement.spacedBy(4.dp)
-            ) {
-                items(items = foodTypeList) { item ->
-                    Text(text = item, modifier = Modifier
-                        .clickable {}
-                        .padding(start = 10.dp, end = 5.dp, top = 2.dp, bottom = 2.dp)
-                        .border(1.dp, AllButton)
-                    )
-                }
-            }
-
-            val list = listOf(1,2,3,4,5,6,7,8,9)
-            /*LazyColumn(
-                modifier = Modifier
-                    .layoutId("foodList")
-
-            ) {
-                items(items = list) { item ->
-                        FoodsItem(item, navController)
-                }
-
-            }*/
-
-            LazyColumn(
-                modifier = Modifier
-                    .layoutId("foodList")
-
-            ) {
-                items(state.foods) { food ->
-                    FoodListItem(
-                        food = food,
-                        onItemClick = {
-                            navController.navigate(route = Screen.FoodDetailsScreen.route + "/${food.foodName}")
-                        }
-                    )
-                }
-
-            }
+            TopAppBarHeader()
+            Spacer(modifier = Modifier.padding(10.dp))
+            TypeList(list = foodTypeList)
+            Spacer(modifier = Modifier.padding(20.dp))
+            FoodList(state, navController)
 
             if (state.error.isNotBlank()) {
                 Text(
@@ -105,9 +62,32 @@ fun MenuScreen(
                 )
             }
             if (state.isLoading) {
-                CircularProgressIndicator()
+                Box(
+                    contentAlignment = Alignment.Center,
+                    modifier = Modifier.fillMaxSize()
+                ) {
+                    CircularProgressIndicator()
+                }
             }
         }
+    }
+}
+
+@Composable
+fun TopAppBarHeader() {
+    Column {
+        Text(
+            text = "Our",
+            fontStyle = FontStyle.Italic,
+            fontSize = 30.sp
+        )
+
+        Text(
+            text = "Menu",
+            fontWeight = FontWeight.Bold,
+            fontStyle = FontStyle.Italic,
+            fontSize = 30.sp
+        )
     }
 }
 
@@ -116,51 +96,68 @@ private fun foodType(): List<String> {
 }
 
 @Composable
-fun FoodsItem(i: Int, navController: NavController) {
-    Card(
-        modifier = Modifier.clickable(
-            onClick = { navController.navigate(route = Screen.FoodDetailsScreen.route) }
-        )
+fun TypeList(list: List<String>) {
+    var selectedOption by remember {
+        mutableStateOf(list[0])
+    }
+    val onSelectionChange = { text: String ->
+        selectedOption = text
+    }
+
+    Row(
+        modifier = Modifier
+            .padding(0.dp, 8.dp),
     ) {
-        Column(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Text(
-                text = "Food Name $i",
-                textAlign = TextAlign.Center,
-                fontSize = 24.sp,
-                fontWeight = FontWeight.Bold
-            )
+        list.forEach { text ->
+            Column(modifier = Modifier
+                .padding(0.dp, 4.dp, 12.dp, 4.dp)
+                .width(IntrinsicSize.Max)) {
+                Text(
+                    text = text,
+                    color = if (text == selectedOption) {
+                        AllButton
+                    } else {
+                        Color.LightGray
+                    },
+                    modifier = Modifier
+                        .clickable {
+                            onSelectionChange(text)
+                        },
+                )
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 4.dp)
+                        .height(2.dp)
+                        .clip(
+                            RoundedCornerShape(1.dp)
+                        )
+                        .background(
+                            if (text == selectedOption) {
+                                AllButton
+                            } else {
+                                Color.LightGray
+                            }
+                        )
+                )
+            }
+        }
+    }
+}
 
-            Image(
-                painter = painterResource(
-                    id = R.drawable.ic_launcher_background
-                ),
-                contentDescription = "",
-                modifier = Modifier
-                    .padding(top = 10.dp, bottom = 10.dp)
-                    .padding(0.dp)
-            )
 
-            Text(
-                text = "0.00 MYR",
-                textAlign = TextAlign.Center,
-                fontSize = 18.sp
-            )
-
-            Text(
-                text = "Description",
-                textAlign = TextAlign.Center,
-                fontSize = 15.sp
-            )
-
-
-            Divider(
-                color = Color.Gray,
-                modifier = Modifier.padding(top = 10.dp, bottom = 10.dp)
+@Composable
+fun FoodList(state: FoodListState, navController: NavController) {
+    LazyColumn {
+        items(state.foods) { food ->
+            FoodListItem(
+                food = food,
+                onItemClick = {
+                    navController.navigate(route = Screen.FoodDetailsScreen.route + "/${food.foodName}")
+                }
             )
         }
+
     }
 }
 
@@ -185,14 +182,21 @@ fun FoodListItem(
                 fontWeight = FontWeight.Bold
             )
 
+            val painter = rememberImagePainter(
+                data = food.foodImage,
+                builder = {
+                    placeholder(R.drawable.ic_image_placeholder)
+                    crossfade(500)
+                }
+            )
             Image(
-                painter = painterResource(
-                    id = R.drawable.ic_launcher_background
-                ),
-                contentDescription = "",
+                painter = painter,
+                contentDescription = "Food Image",
+                contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .padding(top = 10.dp, bottom = 10.dp)
                     .padding(0.dp)
+                    .fillMaxWidth()
             )
 
             Text(
@@ -212,30 +216,6 @@ fun FoodListItem(
                 color = Color.Gray,
                 modifier = Modifier.padding(top = 10.dp, bottom = 10.dp)
             )
-        }
-    }
-}
-
-private fun menuScreenConstraintSet(): ConstraintSet {
-    return ConstraintSet {
-        val menuText = createRefFor("menuText")
-        val typeList = createRefFor("typeList")
-        val foodList = createRefFor("foodList")
-
-        constrain(menuText) {
-            top.linkTo(parent.top, 20.dp)
-            centerHorizontallyTo(parent)
-        }
-
-        constrain(typeList) {
-            top.linkTo(menuText.bottom, 20.dp)
-            width = Dimension.fillToConstraints
-        }
-
-        constrain(foodList) {
-            top.linkTo(typeList.bottom, 20.dp)
-            bottom.linkTo(parent.bottom)
-            width = Dimension.fillToConstraints
         }
     }
 }

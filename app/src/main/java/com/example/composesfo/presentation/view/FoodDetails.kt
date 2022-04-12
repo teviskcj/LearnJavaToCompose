@@ -14,6 +14,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -27,6 +28,7 @@ import androidx.constraintlayout.compose.Dimension
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import coil.compose.rememberImagePainter
 import com.example.composesfo.R
 import com.example.composesfo.presentation.foodDetails.FoodDetailsViewModel
 import com.example.composesfo.presentation.navigation.Screen
@@ -47,11 +49,17 @@ fun FoodDetailsScreen(
             constraintSet = foodDetailsScreenConstraintSet()
         ) {
             state.food?.let { food ->
+                val painter = rememberImagePainter(
+                    data = food.foodImage,
+                    builder = {
+                        placeholder(R.drawable.ic_image_placeholder)
+                        crossfade(500)
+                    }
+                )
                 Image(
-                    painter = painterResource(
-                        id = R.drawable.ic_launcher_background
-                    ),
-                    contentDescription = "",
+                    painter = painter,
+                    contentDescription = "Food Image",
+                    contentScale = ContentScale.Crop,
                     modifier = Modifier
                         .padding(top = 10.dp, bottom = 10.dp)
                         .padding(0.dp)

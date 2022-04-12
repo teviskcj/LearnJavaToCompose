@@ -6,9 +6,9 @@ import retrofit2.http.Path
 
 interface SFOApi {
 
-    @GET("/Foods")
-    suspend fun getFoods(): List<FoodDto>
+    @GET("/Foods/.json")
+    suspend fun getFoods(): Map<String, FoodDto>
 
-    @GET("/Foods/{foodId}")
+    @GET("/Foods/{foodId}.json")
     suspend fun getFoodById(@Path("foodId") foodId: String): FoodDto
 }

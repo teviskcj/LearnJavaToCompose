@@ -4,7 +4,7 @@ import com.example.composesfo.data.remote.dto.FoodDto
 
 interface FoodRepository {
 
-    suspend fun getFoods(): List<FoodDto>
+    suspend fun getFoods(): Map<String, FoodDto>
 
     suspend fun getFoodById(foodId: String): FoodDto
 }
