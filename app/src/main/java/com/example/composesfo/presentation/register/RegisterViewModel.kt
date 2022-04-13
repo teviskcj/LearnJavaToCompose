@@ -1,4 +1,4 @@
-package com.example.composesfo.presentation.login
+package com.example.composesfo.presentation.register
 
 import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
@@ -8,8 +8,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.composesfo.common.Resource
 import com.example.composesfo.common.UiEvent
-import com.example.composesfo.domain.model.UserLogin
-import com.example.composesfo.domain.useCase.UserLoginUseCase
+import com.example.composesfo.data.remote.dto.UserDto
+import com.example.composesfo.domain.useCase.UserRegisterUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.launchIn
@@ -19,15 +19,17 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class LoginViewModel @Inject constructor(
-    private val userLoginUseCase: UserLoginUseCase
+class RegisterViewModel @Inject constructor(
+    private val userRegisterUseCase: UserRegisterUseCase
 ) : ViewModel() {
-
-    private val _state = mutableStateOf(LoginState())
-    val state: State<LoginState> = _state
+    private val _state = mutableStateOf(RegisterState())
+    val state: State<RegisterState> = _state
 
     private val _uiEvent =  Channel<UiEvent>()
     val uiEvent = _uiEvent.receiveAsFlow()
+
+    var name by mutableStateOf("")
+        private set
 
     var phone by mutableStateOf("")
         private set
@@ -35,28 +37,24 @@ class LoginViewModel @Inject constructor(
     var password by mutableStateOf("")
         private set
 
-    var showPassword by  mutableStateOf(false)
-        private set
-
-
-    init {
-        getUsers()
-    }
-
-    private fun getUsers() {
-        userLoginUseCase().onEach { result ->
+    fun createUser(userId: String, userDto: UserDto) {
+        userRegisterUseCase(userId, userDto).onEach { result ->
             when(result) {
                 is Resource.Success -> {
-                    _state.value = LoginState(users = result.data ?: emptyList())
+                    _state.value = RegisterState(userRegister = result.data)
                 }
                 is Resource.Error -> {
-                    _state.value = LoginState(error = result.message ?: "An unexpected error occurred")
+                    _state.value = RegisterState(error = result.message ?: "An unexpected error occurred")
                 }
                 is Resource.Loading -> {
-                    _state.value = LoginState(isLoading = true)
+                    _state.value = RegisterState(isLoading = true)
                 }
             }
         }.launchIn(viewModelScope)
+    }
+
+    fun onNameChange(text: String) {
+        name = text
     }
 
     fun onPhoneChange(text: String) {
@@ -67,43 +65,25 @@ class LoginViewModel @Inject constructor(
         password = text
     }
 
-    fun showPasswordChange(boolean: Boolean) {
-        showPassword = boolean
-    }
-
     fun checkNullField(): Boolean {
-        if (phone.isBlank() || password.isBlank()) {
+        if (phone.isBlank() || password.isBlank() || name.isBlank()) {
             sendUiEvent(UiEvent.ShowSnackbar(
-                message = "Please enter phone and password"
-            ))
-            return false
-        }
-        return true
-    }
-    fun matchUserCredentials(): Boolean {
-
-        val list = _state.value.users
-        val user = findUser(list)
-
-        if (user?.password != password) {
-            sendUiEvent(UiEvent.ShowSnackbar(
-                message = "Invalid phone and password"
+                message = "Please enter name, phone and password"
             ))
             return false
         }
         return true
     }
 
-    private fun findUser(list: List<UserLogin>): UserLogin? {
-        for (user in list) {
-            if (phone == user.phone) {
-                return user
-            }
+    fun isRegisterSuccessful(error: String): Boolean {
+        if (error.isNotBlank()) {
+            return false
         }
-        return null
+        sendUiEvent(UiEvent.ShowSnackbar(
+            message = "Register Successful"
+        ))
+        return true
     }
-
-
 
     private fun sendUiEvent(event: UiEvent) {
         viewModelScope.launch {

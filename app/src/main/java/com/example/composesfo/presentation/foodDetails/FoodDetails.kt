@@ -44,12 +44,16 @@ fun FoodDetailsScreen(
         ) {
 
             state.food?.let { food ->
-                DisplayFoodDetail(food)
+                DisplayFoodDetail(food = food)
             }
             Spacer(modifier = Modifier
                 .padding(10.dp)
                 .weight(1f))
-            QuantityButton(viewModel)
+            QuantityButton(
+                stateQuantity = viewModel.stateQuantity,
+                decreaseQuantity = viewModel::decreaseQuantity,
+                increaseQuantity = viewModel::increaseQuantity
+            )
             Spacer(modifier = Modifier
                 .padding(20.dp)
                 .weight(1f))
@@ -68,8 +72,8 @@ fun FoodDetailsScreen(
                 )
             }
 
-            IsStateError(state)
-            IsStateLoading(state)
+            IsStateError(state.error)
+            IsStateLoading(state.isLoading)
         }
     }
 }
@@ -118,7 +122,11 @@ fun DisplayFoodDetail(food: Food) {
 }
 
 @Composable
-fun QuantityButton(viewModel: FoodDetailsViewModel) {
+fun QuantityButton(
+    stateQuantity: Int,
+    decreaseQuantity: () -> Unit,
+    increaseQuantity: () -> Unit
+) {
     Box(
         modifier = Modifier
             .clip(RoundedCornerShape(10.dp))
@@ -133,11 +141,11 @@ fun QuantityButton(viewModel: FoodDetailsViewModel) {
                 text = "-",
                 color = Color.White,
                 fontSize = 24.sp,
-                modifier = Modifier.noRippleClickable { viewModel.decreaseQuantity() }
+                modifier = Modifier.noRippleClickable { decreaseQuantity() }
             )
 
             Text(
-                text = "${viewModel.stateQuantity}",
+                text = "$stateQuantity",
                 color = Color.White,
                 fontSize = 24.sp,
                 textAlign = TextAlign.Center,
@@ -150,7 +158,7 @@ fun QuantityButton(viewModel: FoodDetailsViewModel) {
                 text = "+",
                 color = Color.White,
                 fontSize = 24.sp,
-                modifier = Modifier.noRippleClickable { viewModel.increaseQuantity() }
+                modifier = Modifier.noRippleClickable { increaseQuantity() }
             )
 
         }
@@ -158,10 +166,10 @@ fun QuantityButton(viewModel: FoodDetailsViewModel) {
 }
 
 @Composable
-fun IsStateError(state: FoodDetailsState) {
-    if (state.error.isNotBlank()) {
+fun IsStateError(error: String) {
+    if (error.isNotBlank()) {
         Text(
-            text = state.error,
+            text = error,
             color = MaterialTheme.colors.error,
             textAlign = TextAlign.Center,
             modifier = Modifier
@@ -172,8 +180,8 @@ fun IsStateError(state: FoodDetailsState) {
 }
 
 @Composable
-fun IsStateLoading(state: FoodDetailsState) {
-    if (state.isLoading) {
+fun IsStateLoading(isLoading: Boolean) {
+    if (isLoading) {
         Box(
             contentAlignment = Alignment.Center,
             modifier = Modifier.fillMaxSize()

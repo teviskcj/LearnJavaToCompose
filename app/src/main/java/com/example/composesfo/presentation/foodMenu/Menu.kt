@@ -45,12 +45,19 @@ fun MenuScreen(
 
             TopAppBarHeader()
             Spacer(modifier = Modifier.padding(10.dp))
-            TypeList(foodTypeList, viewModel)
+            TypeList(
+                list = foodTypeList,
+                getColor = viewModel::getColor,
+                onTypeChange = viewModel::onTypeChange
+            )
             Spacer(modifier = Modifier.padding(20.dp))
-            FoodList(state, navController)
+            FoodList(
+                foods = state.foods,
+                navController = navController
+            )
 
-            IsStateError(state)
-            IsStateLoading(state)
+            IsStateError(state.error)
+            IsStateLoading(state.isLoading)
         }
     }
 }
@@ -78,7 +85,11 @@ private fun foodType(): List<String> {
 }
 
 @Composable
-fun TypeList(list: List<String>, viewModel: FoodListViewModel) {
+fun TypeList(
+    list: List<String>,
+    getColor: (String) -> Color,
+    onTypeChange: (String) -> Unit
+) {
 
     Row(
         modifier = Modifier
@@ -92,10 +103,10 @@ fun TypeList(list: List<String>, viewModel: FoodListViewModel) {
             ) {
                 Text(
                     text = text,
-                    color = viewModel.getColor(text),
+                    color = getColor(text),
                     modifier = Modifier
                         .noRippleClickable {
-                            viewModel.onTypeChange(text)
+                            onTypeChange(text)
                         }
                 )
                 Box(
@@ -107,7 +118,7 @@ fun TypeList(list: List<String>, viewModel: FoodListViewModel) {
                             RoundedCornerShape(1.dp)
                         )
                         .background(
-                            viewModel.getColor(text)
+                            getColor(text)
                         )
                 )
             }
@@ -117,9 +128,12 @@ fun TypeList(list: List<String>, viewModel: FoodListViewModel) {
 
 
 @Composable
-fun FoodList(state: FoodListState, navController: NavController) {
+fun FoodList(
+    foods: List<Food>,
+    navController: NavController
+) {
     LazyColumn {
-        items(state.foods) { food ->
+        items(foods) { food ->
             FoodListItem(
                 food = food,
                 onItemClick = {
@@ -154,7 +168,7 @@ fun FoodListItem(
             val painter = rememberImagePainter(
                 data = food.foodImage,
                 builder = {
-                    placeholder(R.drawable.ic_image_placeholder)
+                    //placeholder(R.drawable.ic_image_placeholder)
                     crossfade(500)
                 }
             )
@@ -163,6 +177,7 @@ fun FoodListItem(
                 contentDescription = "Food Image",
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
+                    .height(200.dp)
                     .padding(top = 10.dp, bottom = 10.dp)
                     .padding(0.dp)
                     .fillMaxWidth()
@@ -190,10 +205,10 @@ fun FoodListItem(
 }
 
 @Composable
-fun IsStateError(state: FoodListState) {
-    if (state.error.isNotBlank()) {
+fun IsStateError(error: String) {
+    if (error.isNotBlank()) {
         Text(
-            text = state.error,
+            text = error,
             color = MaterialTheme.colors.error,
             textAlign = TextAlign.Center,
             modifier = Modifier
@@ -204,8 +219,8 @@ fun IsStateError(state: FoodListState) {
 }
 
 @Composable
-fun IsStateLoading(state: FoodListState) {
-    if (state.isLoading) {
+fun IsStateLoading(isLoading: Boolean) {
+    if (isLoading) {
         Box(
             contentAlignment = Alignment.Center,
             modifier = Modifier.fillMaxSize()
