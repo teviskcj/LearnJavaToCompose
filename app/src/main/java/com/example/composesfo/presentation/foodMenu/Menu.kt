@@ -11,11 +11,14 @@ import androidx.compose.material.Divider
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -26,7 +29,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import coil.compose.rememberImagePainter
-import com.example.composesfo.R
+import com.example.composesfo.common.StoreUserPhone
 import com.example.composesfo.domain.model.Food
 import com.example.composesfo.presentation.component.noRippleClickable
 import com.example.composesfo.presentation.navigation.Screen
@@ -38,12 +41,16 @@ fun MenuScreen(
 ) {
     val state = viewModel.state.value
     val foodTypeList = foodType()
+    val context = LocalContext.current
+    val scope = rememberCoroutineScope()
+    val dataStore = StoreUserPhone(context)
+    val userPhone = dataStore.getPhone.collectAsState(initial = "")
 
     Box(modifier = Modifier
         .fillMaxSize()) {
         Column(modifier = Modifier.padding(16.dp)) {
 
-            TopAppBarHeader()
+            TopAppBarHeader(userPhone.value!!)
             Spacer(modifier = Modifier.padding(10.dp))
             TypeList(
                 list = foodTypeList,
@@ -63,10 +70,10 @@ fun MenuScreen(
 }
 
 @Composable
-fun TopAppBarHeader() {
+fun TopAppBarHeader(userPhone: String) {
     Column {
         Text(
-            text = "Our",
+            text = userPhone,
             fontStyle = FontStyle.Italic,
             fontSize = 30.sp
         )

@@ -8,9 +8,11 @@ import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Phone
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
@@ -26,9 +28,12 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.composesfo.R
+import com.example.composesfo.common.StoreUserPhone
 import com.example.composesfo.common.UiEvent
 import com.example.composesfo.presentation.component.HeaderImage
 import com.example.composesfo.presentation.navigation.Screen
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 
 @Composable
 fun LoginScreen(
@@ -36,6 +41,10 @@ fun LoginScreen(
     viewModel: LoginViewModel = hiltViewModel()
 ) {
     val scaffoldState = rememberScaffoldState()
+    val context = LocalContext.current
+    val scope = rememberCoroutineScope()
+    val dataStore = StoreUserPhone(context)
+
     LaunchedEffect(key1 = true) {
         viewModel.uiEvent.collect { event ->
             when(event) {
@@ -64,7 +73,9 @@ fun LoginScreen(
                     onPasswordChange = viewModel::onPasswordChange,
                     showPasswordChange = viewModel::showPasswordChange,
                     checkNullField = viewModel::checkNullField,
-                    matchUserCredentials = viewModel::matchUserCredentials
+                    matchUserCredentials = viewModel::matchUserCredentials,
+                    scope = scope,
+                    dataStore = dataStore
                 )
             }
         }
@@ -81,7 +92,9 @@ fun LoginForm(
     onPasswordChange: (String) -> Unit,
     showPasswordChange: (Boolean) -> Unit,
     checkNullField: () -> Boolean,
-    matchUserCredentials: () -> Boolean
+    matchUserCredentials: () -> Boolean,
+    scope: CoroutineScope,
+    dataStore: StoreUserPhone
 
 ) {
     Column(
@@ -110,7 +123,12 @@ fun LoginForm(
             }
 
             Button(
-                onClick = { navController.popBackStack() },
+                onClick = {
+                          if (navController.backQueue.isEmpty()) {
+                              navController.navigate(route = Screen.RegisterScreen.route)
+                          } else {
+                              navController.popBackStack()
+                          } },
                 modifier = Modifier
                     .height(60.dp)
                     .width(150.dp)
@@ -194,6 +212,10 @@ fun LoginForm(
         Button(
             onClick = {
                 if (checkNullField() && matchUserCredentials()) {
+                    scope.launch {
+                        dataStore.savePhone(phone)
+                    }
+
                     navController.navigate(route = Screen.HomeScreen.route) {
                         navController.backQueue.clear()
                     }

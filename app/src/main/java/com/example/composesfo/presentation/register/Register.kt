@@ -9,8 +9,10 @@ import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Phone
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
@@ -22,11 +24,14 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.composesfo.R
+import com.example.composesfo.common.StoreUserPhone
 import com.example.composesfo.common.UiEvent
 import com.example.composesfo.data.remote.dto.UserDto
 import com.example.composesfo.presentation.component.HeaderImage
 import com.example.composesfo.presentation.navigation.Screen
 import com.example.composesfo.presentation.ui.theme.ComposeSFOTheme
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 
 @Composable
 fun RegisterScreen(
@@ -35,6 +40,10 @@ fun RegisterScreen(
 ) {
     val state = viewModel.state.value
     val scaffoldState = rememberScaffoldState()
+
+    val context = LocalContext.current
+    val scope = rememberCoroutineScope()
+    val dataStore = StoreUserPhone(context)
     LaunchedEffect(key1 = true) {
         viewModel.uiEvent.collect { event ->
             when(event) {
@@ -65,7 +74,9 @@ fun RegisterScreen(
                     checkNullField = viewModel::checkNullField,
                     createUser = viewModel::createUser,
                     isRegisterSuccessful = viewModel::isRegisterSuccessful,
-                    error = state.error
+                    error = state.error,
+                    scope = scope,
+                    dataStore = dataStore
                 )
             }
         }
@@ -84,7 +95,9 @@ fun RegisterForm(
     checkNullField: () -> Boolean,
     createUser: (String, UserDto) -> Unit,
     isRegisterSuccessful: (String) -> Boolean,
-    error: String
+    error: String,
+    scope: CoroutineScope,
+    dataStore: StoreUserPhone
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -201,6 +214,10 @@ fun RegisterForm(
                 if (checkNullField()) {
                     val userDto = UserDto(name,password,phone)
                     createUser(phone, userDto)
+
+                    scope.launch {
+                        dataStore.savePhone(phone)
+                    }
 
                     if (isRegisterSuccessful(error)) {
                         navController.navigate(route = Screen.HomeScreen.route) {
