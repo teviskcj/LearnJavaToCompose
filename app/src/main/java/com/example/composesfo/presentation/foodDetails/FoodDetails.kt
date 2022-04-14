@@ -9,11 +9,13 @@ import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -24,6 +26,9 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import coil.compose.rememberImagePainter
 import com.example.composesfo.R
+import com.example.composesfo.common.CurrentUserState
+import com.example.composesfo.common.StoreUserPhone
+import com.example.composesfo.data.remote.dto.CartDto
 import com.example.composesfo.domain.model.Food
 import com.example.composesfo.presentation.component.noRippleClickable
 import com.example.composesfo.presentation.navigation.Screen
@@ -35,6 +40,12 @@ fun FoodDetailsScreen(
     viewModel: FoodDetailsViewModel = hiltViewModel()
 ) {
     val state = viewModel.state.value
+    val food = state.food
+
+    val context = LocalContext.current
+    val dataStore = StoreUserPhone(context)
+    val userPhone = dataStore.getPhone.collectAsState(initial = "")
+    val userId = userPhone.value!!
 
     Box(modifier = Modifier
         .fillMaxSize()) {
@@ -43,7 +54,7 @@ fun FoodDetailsScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
 
-            state.food?.let { food ->
+            food?.let {
                 DisplayFoodDetail(food = food)
             }
             Spacer(modifier = Modifier
@@ -59,8 +70,22 @@ fun FoodDetailsScreen(
                 .weight(1f))
             Button(
                 onClick = {
-                    navController.navigate(Screen.HomeScreen.route) {
-                        navController.backQueue.clear()
+                    val cartDto = food?.let {
+                        CartDto(
+                            foodName = food.foodName,
+                            foodPrice = food.foodPrice,
+                            quantity = viewModel.stateQuantity.toString()
+                        )
+                    }
+
+                    if (cartDto != null) {
+                        viewModel.createCart(CurrentUserState.userId, cartDto.foodName, cartDto)
+                    }
+
+                    if (viewModel.isCartAdded(state.error)) {
+                        navController.navigate(Screen.HomeScreen.route) {
+                            navController.backQueue.clear()
+                        }
                     }
                 },
                 modifier = Modifier
@@ -87,7 +112,6 @@ fun DisplayFoodDetail(food: Food) {
         val painter = rememberImagePainter(
             data = food.foodImage,
             builder = {
-                placeholder(R.drawable.ic_image_placeholder)
                 crossfade(500)
             }
         )
@@ -97,6 +121,8 @@ fun DisplayFoodDetail(food: Food) {
             contentScale = ContentScale.Crop,
             modifier = Modifier
                 .padding(top = 10.dp, bottom = 30.dp)
+                .fillMaxWidth()
+                .height(200.dp)
         )
 
         Text(

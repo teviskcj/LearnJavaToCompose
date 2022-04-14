@@ -24,6 +24,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.composesfo.R
+import com.example.composesfo.common.CurrentUserState
 import com.example.composesfo.common.StoreUserPhone
 import com.example.composesfo.common.UiEvent
 import com.example.composesfo.data.remote.dto.UserDto
@@ -215,9 +216,11 @@ fun RegisterForm(
                     val userDto = UserDto(name,password,phone)
                     createUser(phone, userDto)
 
-                    scope.launch {
+                    /*scope.launch {
                         dataStore.savePhone(phone)
-                    }
+                    }*/
+
+                    CurrentUserState.userId = phone
 
                     if (isRegisterSuccessful(error)) {
                         navController.navigate(route = Screen.HomeScreen.route) {

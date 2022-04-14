@@ -1,128 +1,206 @@
 package com.example.composesfo.presentation.view
 
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material.Button
-import androidx.compose.material.Card
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.layoutId
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.constraintlayout.compose.ConstraintLayout
-import androidx.constraintlayout.compose.ConstraintSet
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.example.composesfo.common.StoreUserPhone
+import com.example.composesfo.domain.model.Cart
+import com.example.composesfo.presentation.cart.CartViewModel
+import com.example.composesfo.presentation.component.TopBarTitle
 import com.example.composesfo.presentation.navigation.Screen
-import com.example.composesfo.presentation.ui.theme.AllButton
+import com.example.composesfo.presentation.ui.theme.*
 
 @Composable
 fun CartScreen(
-    navController: NavController
+    navController: NavController,
+    viewModel: CartViewModel = hiltViewModel()
 ) {
-    Surface(color = Color.White) {
-        ConstraintLayout(modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
-            constraintSet = cartScreenConstraintSet()
-        ) {
-            Text(
-                text = "Total Price = 0.00 MYR",
-                fontSize = 30.sp,
-                modifier = Modifier.layoutId("totalText")
+    val state = viewModel.state.value
+
+    val context = LocalContext.current
+    val dataStore = StoreUserPhone(context)
+    val userPhone = dataStore.getPhone.collectAsState(initial = "")
+
+    /*userPhone.value?.let {
+        viewModel.getCartList(it)
+    }*/
+    //viewModel.getCartList(userPhone.value.toString())
+
+    Box(modifier = Modifier
+        .fillMaxSize()) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            TopBarTitle(
+                textOne = "Shopping",
+                textTwo = "Cart"
             )
-
-            LazyColumn(
-                modifier = Modifier
-                    .layoutId("cartList")
-
-            ) {
-                items(count = 3){
-                    CartItemCard("Food Name", 0,0)
-                }
-
-            }
-            Button(
-                onClick = { navController.navigate(Screen.PaymentScreen.route) },
-                modifier = Modifier
-                    .height(60.dp)
-                    .layoutId("orderButton")
-            ) {
-                Text(
-                    text = "Place Order",
-                    fontSize = 22.sp
-                )
-            }
+            Spacer(modifier = Modifier.padding(10.dp))
+            CartList(cartList = state.cartList)
+            Spacer(modifier = Modifier
+                    .padding(20.dp)
+                    .weight(1f)
+            )
+            ButtonWithTotalItems(navController = navController)
         }
     }
 }
 
+
 @Composable
-fun CartItemCard(foodName: String, quantity: Int, price: Int) {
-        Card(backgroundColor = AllButton, 
-            modifier = Modifier
-                .padding(24.dp)
-                .fillMaxWidth()
-                .clickable { }
-        ) {
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier.padding(10.dp)
-            ) {
-                Row(
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                ) {
-                    Text(
-                        text = foodName,
-                        color = Color.White,
-                        fontSize = 18.sp)
-
-                    Text(
-                        text = "Quantity = $quantity",
-                        color = Color.White,
-                        fontSize = 18.sp
-                    )
-                }
-                Text(
-                    text = "Price: $price.00 MYR",
-                    color = Color.White,
-                    fontSize = 18.sp
-                )
-            }
-
-            
+fun CartList(
+    cartList: List<Cart>
+) {
+    LazyColumn {
+        items(cartList) { cart ->
+            CartListItem(
+                cart = cart,
+                backgroundColor = lightsilverbox
+            )
         }
+
+    }
 }
 
-private fun cartScreenConstraintSet(): ConstraintSet {
-    return ConstraintSet() {
-        val totalText =  createRefFor("totalText")
-        val cartList = createRefFor("cartList")
-        val orderButton = createRefFor("orderButton")
+@Composable
+fun CartListItem(
+    cart: Cart,
+    backgroundColor: Color = Color.Transparent
+) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp),
+            horizontalAlignment = Alignment.Start,
+            verticalArrangement = Arrangement.SpaceEvenly
+        ) {
+            Text(
+                text = cart.foodName,
+                fontSize = 18.sp,
+                color = titleTextColor,
+                fontWeight = FontWeight.Bold
+            )
+            Spacer(modifier = Modifier.height(10.dp))
 
-        constrain(totalText) {
-            top.linkTo(parent.top, 20.dp)
-            centerHorizontallyTo(parent)
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = buildAnnotatedString {
+                        withStyle(
+                            style = SpanStyle(
+                                orange,
+                                fontWeight = FontWeight.Bold
+                            )
+                        ) {
+                            append("RM ")
+                        }
+                        withStyle(
+                            style = SpanStyle(
+                                titleTextColor
+                            )
+                        ) {
+                            append("${cart.foodPrice}.00")
+                        }
+                    },
+                    style = MaterialTheme.typography.subtitle1,
+                    modifier = Modifier,
+                    fontSize = 16.sp
+
+                )
+                Box(
+                    modifier = Modifier
+                        .size(35.dp, 35.dp)
+                        .clip(CircleShape)
+                        .background(backgroundColor),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = "x${cart.quantity}",
+                        fontSize = 14.sp,
+                        color = titleTextColor
+                    )
+                }
+            }
+        }
+    }
+    Spacer(modifier = Modifier.padding(10.dp))
+}
+
+@Composable
+fun ButtonWithTotalItems(
+    navController: NavController
+) {
+    Column(modifier = Modifier.fillMaxWidth()) {
+        Divider(color = lightGrey, thickness = 2.dp)
+        Spacer(modifier = Modifier.padding(8.dp))
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = "3 Items",
+                fontSize = 14.sp,
+                color = lightGrey
+            )
+
+            Text(
+                text = "$650.00",
+                fontSize = 18.sp,
+                color = titleTextColor,
+                fontWeight = FontWeight.Bold
+            )
         }
 
-        constrain(cartList) {
-            top.linkTo(totalText.bottom, 20.dp)
+        Button(
+            onClick = {
+                navController.navigate(Screen.PaymentScreen.route)
+            },
+            colors = ButtonDefaults.buttonColors(backgroundColor = AllButton),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(
+                    top = 30.dp,
+                    bottom = 34.dp
+                )
+                .align(Alignment.CenterHorizontally),
+            shape = RoundedCornerShape(14.dp)
+        ) {
+            Text(
+                text = "Place Order",
+                color = white,
+                style = MaterialTheme.typography.button,
+                modifier = Modifier.padding(top = 8.dp, bottom = 8.dp)
+            )
         }
 
-        constrain(orderButton) {
-            bottom.linkTo(parent.bottom,20.dp)
-            start.linkTo(parent.start, 30.dp)
-            end.linkTo(parent.end, 30.dp)
-            centerHorizontallyTo(parent)
-        }
     }
 }
 
