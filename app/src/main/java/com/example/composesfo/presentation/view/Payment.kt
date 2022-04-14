@@ -1,118 +1,216 @@
 package com.example.composesfo.presentation.view
 
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Clear
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.layoutId
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import androidx.constraintlayout.compose.ConstraintLayout
-import androidx.constraintlayout.compose.ConstraintSet
-import androidx.constraintlayout.compose.Dimension
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.composesfo.R
+import com.example.composesfo.common.CurrentUserState
+import com.example.composesfo.data.remote.dto.CartDto
+import com.example.composesfo.data.remote.dto.OrderDto
+import com.example.composesfo.presentation.component.getDate
+import com.example.composesfo.presentation.component.getTime
 import com.example.composesfo.presentation.navigation.Screen
+import com.example.composesfo.presentation.payment.OrderViewModel
+import com.example.composesfo.presentation.ui.theme.AllButton
+import com.example.composesfo.presentation.ui.theme.white
 
 @Composable
 fun PaymentScreen(
-    navController: NavController
+    navController: NavController,
+    viewModel: OrderViewModel = hiltViewModel()
 ) {
-    Surface(color = Color.White) {
-        ConstraintLayout(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(16.dp),
-            constraintSet = paymentScreenConstraintSet()
-        ) {
+    val state = viewModel.stateCart.value
 
-            val inputName = remember { mutableStateOf("") }
-            val inputPhone = remember { mutableStateOf("") }
-            val inputAddress = remember { mutableStateOf("") }
-            OutlinedTextField(
-                value = inputName.value,
-                onValueChange = { inputName.value = it },
-                label = { stringResource(R.string.your_name) },
-                singleLine = true,
-                trailingIcon = { Icon(Icons.Filled.Clear, null) },
-                modifier = Modifier.layoutId("inputName")
+    Box(modifier = Modifier
+        .fillMaxSize()) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            OrderForm(
+                name = viewModel.name,
+                phone = viewModel.phone,
+                address = viewModel.address,
+                city = viewModel.city,
+                onNameChange = viewModel::onNameChange,
+                onPhoneChange = viewModel::onPhoneChange,
+                onAddressChange = viewModel::onAddressChange,
+                onCityChange = viewModel::onCityChange
             )
-
-            OutlinedTextField(
-                value = inputPhone.value,
-                onValueChange = { inputPhone.value = it },
-                label = { stringResource(R.string.your_phone) },
-                singleLine = true,
-                trailingIcon = { Icon(Icons.Filled.Clear, null) },
-                modifier = Modifier.layoutId("inputPhone")
-            )
-
-            OutlinedTextField(
-                value = inputAddress.value,
-                onValueChange = { inputAddress.value = it },
-                label = { stringResource(R.string.your_address) },
-                singleLine = true,
-                trailingIcon = { Icon(Icons.Filled.Clear, null) },
-                modifier = Modifier.layoutId("inputAddress")
+            Spacer(modifier = Modifier
+                .padding(20.dp)
+                .weight(1f)
             )
 
             Button(
                 onClick = {
-                    navController.navigate(Screen.HomeScreen.route){
-                        navController.backQueue.clear()
+                    if (viewModel.checkNullField()) {
+                        val orderId = viewModel.createOrderId()
+                        val orderDto = OrderDto(
+                            address = viewModel.address,
+                            city = viewModel.city,
+                            date = getDate(),
+                            time = getTime(),
+                            longitude = 0.0,
+                            latitude = 0.0,
+                            name = viewModel.name,
+                            orderID = orderId,
+                            phone = viewModel.phone,
+                            state = "P",
+                            totalAmount = ""
+                        )
+
+                        viewModel.createOrder(
+                            userId = CurrentUserState.userId,
+                            orderId = orderId,
+                            orderDto = orderDto
+                        )
+
+                        for (cart in state.cartList) {
+                            val cartDto = CartDto(
+                                foodName = cart.foodName,
+                                foodPrice = cart.foodPrice,
+                                quantity = cart.quantity
+                            )
+
+                            viewModel.createCartOrder(
+                                userId = CurrentUserState.userId,
+                                orderId = orderId,
+                                foodId = cart.foodName,
+                                cartDto = cartDto
+                            )
+
+                            viewModel.deleteCartList(CurrentUserState.userId)
+                        }
                     }
-                          },
+
+                    if (viewModel.isOrderSuccessful(viewModel.stateOrder.value.error)) {
+                        navController.navigate(Screen.HomeScreen.route){
+                            navController.backQueue.clear()
+                        }
+                    }
+                },
+                colors = ButtonDefaults.buttonColors(backgroundColor = AllButton),
                 modifier = Modifier
-                    .height(60.dp)
-                    .layoutId("setButton")
+                    .fillMaxWidth()
+                    .padding(
+                        top = 30.dp,
+                        bottom = 34.dp
+                    )
+                    .align(Alignment.CenterHorizontally),
+                shape = RoundedCornerShape(14.dp)
             ) {
                 Text(
                     text = "PROCEED TO PAYMENT",
-                    fontSize = 22.sp
+                    color = white,
+                    style = MaterialTheme.typography.button,
+                    modifier = Modifier.padding(top = 8.dp, bottom = 8.dp)
                 )
             }
         }
     }
 }
 
-private fun paymentScreenConstraintSet(): ConstraintSet {
-    return ConstraintSet{
-        val inputName = createRefFor("inputName")
-        val inputPhone = createRefFor("inputPhone")
-        val inputAddress = createRefFor("inputAddress")
-        val confirmButton = createRefFor("setButton")
+@Composable
+fun OrderForm(
+    name: String,
+    phone: String,
+    address: String,
+    city: String,
+    onNameChange: (String) -> Unit,
+    onPhoneChange: (String) -> Unit,
+    onAddressChange: (String) -> Unit,
+    onCityChange: (String) -> Unit
+){
+    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        OutlinedTextField(
+            value = name,
+            onValueChange = { onNameChange(it) },
+            label = { stringResource(R.string.your_name) },
+            singleLine = true,
+            trailingIcon = {
+                IconButton(
+                    onClick = { onNameChange("") }
+                ) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_clear),
+                        null
+                    )
+                } },
+            keyboardOptions = KeyboardOptions(
+                imeAction = ImeAction.Next
+            )
+        )
 
-        constrain(inputName) {
-            top.linkTo(parent.top, 30.dp)
-            centerHorizontallyTo(parent)
-        }
+        OutlinedTextField(
+            value = phone,
+            onValueChange = { onPhoneChange(it) },
+            label = { stringResource(R.string.your_phone) },
+            singleLine = true,
+            trailingIcon = {
+                IconButton(
+                    onClick = { onPhoneChange("") }
+                ) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_clear),
+                        null
+                    )
+                } },
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Phone,
+                imeAction = ImeAction.Next
+            )
+        )
 
-        constrain(inputPhone) {
-            top.linkTo(inputName.bottom, 30.dp)
-            centerHorizontallyTo(parent)
-        }
+        OutlinedTextField(
+            value = address,
+            onValueChange = { onAddressChange(it) },
+            label = { stringResource(R.string.your_address) },
+            singleLine = true,
+            trailingIcon = {
+                IconButton(
+                    onClick = { onAddressChange("") }
+                ) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_clear),
+                        null
+                    )
+                } },
+            keyboardOptions = KeyboardOptions(
+                imeAction = ImeAction.Next
+            )
+        )
 
-        constrain(inputAddress) {
-            top.linkTo(inputPhone.bottom, 30.dp)
-            centerHorizontallyTo(parent)
-        }
-
-        constrain(confirmButton) {
-            bottom.linkTo(parent.bottom, 30.dp)
-            centerHorizontallyTo(parent)
-            width = Dimension.fillToConstraints
-        }
+        OutlinedTextField(
+            value = city,
+            onValueChange = { onCityChange(it) },
+            label = { stringResource(R.string.your_address) },
+            singleLine = true,
+            trailingIcon = {
+                IconButton(
+                    onClick = { onCityChange("") }
+                ) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_clear),
+                        null
+                    )
+                } },
+            keyboardOptions = KeyboardOptions(
+                imeAction = ImeAction.Done
+            )
+        )
     }
+
 }
 
 @Preview(showBackground = true)

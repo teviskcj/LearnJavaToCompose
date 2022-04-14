@@ -1,4 +1,4 @@
-package com.example.composesfo.presentation.view
+package com.example.composesfo.presentation.cart
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -26,7 +26,6 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.composesfo.common.StoreUserPhone
 import com.example.composesfo.domain.model.Cart
-import com.example.composesfo.presentation.cart.CartViewModel
 import com.example.composesfo.presentation.component.TopBarTitle
 import com.example.composesfo.presentation.navigation.Screen
 import com.example.composesfo.presentation.ui.theme.*

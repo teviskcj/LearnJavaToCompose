@@ -4,9 +4,11 @@ import com.example.composesfo.common.Constants
 import com.example.composesfo.data.remote.SFOApi
 import com.example.composesfo.data.repository.CartRepositoryImpl
 import com.example.composesfo.data.repository.FoodRepositoryImpl
+import com.example.composesfo.data.repository.OrderRepositoryImpl
 import com.example.composesfo.data.repository.UserRepositoryImpl
 import com.example.composesfo.domain.repository.CartRepository
 import com.example.composesfo.domain.repository.FoodRepository
+import com.example.composesfo.domain.repository.OrderRepository
 import com.example.composesfo.domain.repository.UserRepository
 import dagger.Module
 import dagger.Provides
@@ -46,5 +48,11 @@ object AppModule {
     @Singleton
     fun provideCartRepository(api: SFOApi): CartRepository {
         return CartRepositoryImpl(api)
+    }
+
+    @Provides
+    @Singleton
+    fun provideOrderRepository(api: SFOApi): OrderRepository {
+        return OrderRepositoryImpl(api)
     }
 }

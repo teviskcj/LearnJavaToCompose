@@ -2,6 +2,7 @@ package com.example.composesfo.data.remote
 
 import com.example.composesfo.data.remote.dto.CartDto
 import com.example.composesfo.data.remote.dto.FoodDto
+import com.example.composesfo.data.remote.dto.OrderDto
 import com.example.composesfo.data.remote.dto.UserDto
 import com.example.composesfo.domain.model.Cart
 import retrofit2.http.*
@@ -25,5 +26,14 @@ interface SFOApi {
 
     @GET("/Cart List/User View/{userId}/Foods/.json")
     suspend fun getCartList(@Path("userId") userId: String): Map<String, CartDto>
+
+    @PUT("/Orders/{userId}/{orderId}.json")
+    suspend fun createOrder(@Path("userId") userId: String, @Path("orderId") orderId: String, @Body orderDto: OrderDto)
+
+    @PUT("/Cart List/Admin View/{userId}/{orderId}/{foodId}.json")
+    suspend fun createCartOrder(@Path("userId") userId: String, @Path("orderId") orderId: String, @Path("foodId") foodId: String, @Body cartDto: CartDto)
+
+    @DELETE("/Cart List/User View/{userId}.json")
+    suspend fun deleteCartList(@Path("userId") userId: String)
 
 }

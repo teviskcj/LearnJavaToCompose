@@ -6,4 +6,8 @@ interface CartRepository {
     suspend fun createCart(userId: String, foodId: String, cartDto: CartDto)
 
     suspend fun getCartList(userId: String): Map<String, CartDto>
+
+    suspend fun createCartOrder(userId: String, orderId: String, foodId: String, cartDto: CartDto)
+
+    suspend fun deleteCartList(userId: String)
 }

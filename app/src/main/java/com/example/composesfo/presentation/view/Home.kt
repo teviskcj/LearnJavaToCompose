@@ -16,6 +16,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.composesfo.R
+import com.example.composesfo.presentation.cart.CartScreen
 import com.example.composesfo.presentation.foodMenu.MenuScreen
 import com.example.composesfo.presentation.ui.theme.AllButton
 

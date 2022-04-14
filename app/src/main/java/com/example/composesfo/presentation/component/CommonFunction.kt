@@ -1,5 +1,7 @@
 package com.example.composesfo.presentation.component
 
+import android.annotation.SuppressLint
+import android.icu.text.SimpleDateFormat
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -13,7 +15,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.intl.Locale
 import com.example.composesfo.R
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
+import java.util.*
 
 inline fun Modifier.noRippleClickable(crossinline onClick: ()->Unit): Modifier = composed {
     clickable(indication = null,
@@ -41,3 +47,19 @@ fun HeaderImage() {
         )
     }
 }
+
+@SuppressLint("SimpleDateFormat")
+fun getDate(): String {
+    val date = Calendar.getInstance()
+    val currentDateID = java.text.SimpleDateFormat("MMddyyyy")
+    return currentDateID.format(date.time)
+}
+
+@SuppressLint("SimpleDateFormat")
+fun getTime(): String {
+    val date = Calendar.getInstance()
+    val currentDateID = java.text.SimpleDateFormat("mmHHss")
+    return currentDateID.format(date.time)
+}
+
+
