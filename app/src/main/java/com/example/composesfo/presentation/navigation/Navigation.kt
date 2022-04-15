@@ -8,8 +8,10 @@ import com.example.composesfo.presentation.cart.CartScreen
 import com.example.composesfo.presentation.foodDetails.FoodDetailsScreen
 import com.example.composesfo.presentation.foodMenu.MenuScreen
 import com.example.composesfo.presentation.login.LoginScreen
+import com.example.composesfo.presentation.payment.PaymentScreen
 import com.example.composesfo.presentation.register.RegisterScreen
 import com.example.composesfo.presentation.view.*
+import com.example.composesfo.presentation.wallet.WalletScreen
 
 @Composable
 fun Navigation() {

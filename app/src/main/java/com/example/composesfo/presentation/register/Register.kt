@@ -3,10 +3,6 @@ package com.example.composesfo.presentation.register
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Lock
-import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.Phone
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
@@ -28,11 +24,13 @@ import com.example.composesfo.common.CurrentUserState
 import com.example.composesfo.common.StoreUserPhone
 import com.example.composesfo.common.UiEvent
 import com.example.composesfo.data.remote.dto.UserDto
+import com.example.composesfo.data.remote.dto.WalletDto
 import com.example.composesfo.presentation.component.HeaderImage
+import com.example.composesfo.presentation.component.TextFieldWithIcon
 import com.example.composesfo.presentation.navigation.Screen
+import com.example.composesfo.presentation.ui.theme.AllButton
 import com.example.composesfo.presentation.ui.theme.ComposeSFOTheme
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
 
 @Composable
 fun RegisterScreen(
@@ -74,6 +72,7 @@ fun RegisterScreen(
                     onPasswordChange = viewModel::onPasswordChange,
                     checkNullField = viewModel::checkNullField,
                     createUser = viewModel::createUser,
+                    createWallet = viewModel::createWallet,
                     isRegisterSuccessful = viewModel::isRegisterSuccessful,
                     error = state.error,
                     scope = scope,
@@ -95,6 +94,7 @@ fun RegisterForm(
     onPasswordChange: (String) -> Unit,
     checkNullField: () -> Boolean,
     createUser: (String, UserDto) -> Unit,
+    createWallet: (String, WalletDto) -> Unit,
     isRegisterSuccessful: (String) -> Boolean,
     error: String,
     scope: CoroutineScope,
@@ -104,19 +104,19 @@ fun RegisterForm(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp)
+            .padding(30.dp, 20.dp)
     ) {
 
         // navigator
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceEvenly
+            horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Button(
                 onClick = { navController.navigate(route = Screen.LoginScreen.route) },
                 modifier = Modifier
                     .height(60.dp)
-                    .width(150.dp)
+                    .weight(1f)
             ) {
                 Text(
                     text = "LOG IN",
@@ -125,12 +125,17 @@ fun RegisterForm(
 
             }
 
+
+            Spacer(modifier = Modifier
+                .weight(0.2f)
+            )
+
             Button(
                 onClick = {  },
                 enabled = false,
                 modifier = Modifier
                     .height(60.dp)
-                    .width(150.dp)
+                    .weight(1f)
             ) {
                 Text(
                     text = "SIGN UP",
@@ -145,62 +150,32 @@ fun RegisterForm(
             .weight(1f))
 
         // Text Field
-        OutlinedTextField(
-            value = name,
-            onValueChange = { onNameChange(it) },
-            label = { stringResource(R.string.name) },
-            singleLine = true,
-            leadingIcon = { Icon(Icons.Filled.Person, null) },
-            trailingIcon = {
-                IconButton(
-                    onClick = { onNameChange("") }
-                ) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_clear),
-                        null
-                    )
-                } },
-            keyboardOptions = KeyboardOptions(
-                imeAction = ImeAction.Next
-            )
+        TextFieldWithIcon(
+            text = name,
+            onTextChange = onNameChange,
+            label = stringResource(R.string.name),
+            painter = painterResource(id = R.drawable.ic_profile),
+            iconColor = AllButton,
         )
 
-        OutlinedTextField(
-            value = phone,
-            onValueChange = { onPhoneChange(it) },
-            label = { stringResource(R.string.phone_number) },
-            singleLine = true,
-            leadingIcon = { Icon(Icons.Filled.Phone, null) },
-            trailingIcon = {
-                IconButton(
-                    onClick = { onPhoneChange("") }
-                ) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_clear),
-                        null
-                    )
-                } },
+        TextFieldWithIcon(
+            text = phone,
+            onTextChange = onPhoneChange,
+            label = stringResource(R.string.phone_number),
+            painter = painterResource(id = R.drawable.ic_phone),
+            iconColor = AllButton,
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Phone,
                 imeAction = ImeAction.Next
             )
         )
 
-        OutlinedTextField(
-            value = password,
-            onValueChange = { onPasswordChange(it) },
-            label = { stringResource(R.string.password) },
-            singleLine = true,
-            leadingIcon = { Icon(Icons.Filled.Lock, null) },
-            trailingIcon = {
-                IconButton(
-                    onClick = { onPasswordChange("") }
-                ) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_clear),
-                        null
-                    )
-                } },
+        TextFieldWithIcon(
+            text = password,
+            onTextChange = onPasswordChange,
+            label = stringResource(R.string.password),
+            painter = painterResource(id = R.drawable.ic_password),
+            iconColor = AllButton,
             keyboardOptions = KeyboardOptions(
                 imeAction = ImeAction.Done
             )
@@ -215,6 +190,7 @@ fun RegisterForm(
                 if (checkNullField()) {
                     val userDto = UserDto(name,password,phone)
                     createUser(phone, userDto)
+                    createWallet(phone, WalletDto(phone,0))
 
                     /*scope.launch {
                         dataStore.savePhone(phone)
@@ -232,6 +208,7 @@ fun RegisterForm(
             },
             modifier = Modifier
                 .height(60.dp)
+                .fillMaxWidth()
         ) {
             Text(
                 text = "REGISTER NOW",

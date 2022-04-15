@@ -2,7 +2,9 @@ package com.example.composesfo.presentation.cart
 
 import android.app.Application
 import androidx.compose.runtime.State
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
@@ -22,24 +24,22 @@ import javax.inject.Inject
 
 @HiltViewModel
 class CartViewModel @Inject constructor(
-    private val getCartUseCase: GetCartUseCase,
-    savedStateHandle: SavedStateHandle,
-    application: Application
+    private val getCartUseCase: GetCartUseCase
 ) : ViewModel() {
 
     private val _state = mutableStateOf(CartListState())
     val state: State<CartListState> = _state
 
-    val dataStore = StoreUserPhone(application)
-    val userPhone = dataStore.getPhone
+    var totalAmount =0
+        private set
+
+    var totalItem =0
+        private set
+
+    var expanded by  mutableStateOf(false)
+        private set
 
     init {
-        /*savedStateHandle.get<String>(Constants.PARAM_USER_ID)?.let { userId ->
-            getCartList(userId)
-        }*/
-        /*viewModelScope.launch {
-            userPhone.first()?.let { getCartList(it) }
-        }*/
         getCartList(CurrentUserState.userId)
     }
 
@@ -57,5 +57,17 @@ class CartViewModel @Inject constructor(
                 }
             }
         }.launchIn(viewModelScope)
+    }
+
+    fun addItem(quantity: Int) {
+        totalItem += quantity
+    }
+
+    fun addTotalAmount(quantity: Int, price: Int) {
+        totalAmount += quantity * price
+    }
+
+    fun onExpandedChange(boolean: Boolean) {
+        expanded = boolean
     }
 }

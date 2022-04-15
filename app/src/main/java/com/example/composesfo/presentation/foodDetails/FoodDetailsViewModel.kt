@@ -9,11 +9,13 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.composesfo.common.Constants
+import com.example.composesfo.common.CurrentUserState
 import com.example.composesfo.common.Resource
 import com.example.composesfo.common.UiEvent
 import com.example.composesfo.data.remote.dto.CartDto
 import com.example.composesfo.data.remote.dto.UserDto
 import com.example.composesfo.domain.useCase.CreateCartUseCase
+import com.example.composesfo.domain.useCase.GetCartFoodUseCase
 import com.example.composesfo.domain.useCase.GetFoodUseCase
 import com.example.composesfo.presentation.cart.CartState
 import com.example.composesfo.presentation.register.RegisterState
@@ -26,6 +28,7 @@ import javax.inject.Inject
 class FoodDetailsViewModel @Inject constructor(
     private val getFoodUseCase: GetFoodUseCase,
     private val createCartUseCase: CreateCartUseCase,
+    private val getCartFoodUseCase: GetCartFoodUseCase,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
@@ -42,6 +45,14 @@ class FoodDetailsViewModel @Inject constructor(
         stateQuantity = 1
         savedStateHandle.get<String>(Constants.PARAM_FOOD_ID)?.let { foodId ->
             getFood(foodId)
+        }
+        if (CurrentUserState.cartFoodId.isNotBlank()) {
+            getFood(CurrentUserState.cartFoodId)
+            getCartFood(CurrentUserState.userId, CurrentUserState.cartFoodId)
+            _cartState.value.cart?.let {
+                stateQuantity = it.quantity.toInt()
+            }
+
         }
     }
 
@@ -63,6 +74,22 @@ class FoodDetailsViewModel @Inject constructor(
 
     fun createCart(userId: String, foodId: String, cartDto: CartDto) {
         createCartUseCase(userId, foodId, cartDto).onEach { result ->
+            when(result) {
+                is Resource.Success -> {
+                    _cartState.value = CartState(cart = result.data)
+                }
+                is Resource.Error -> {
+                    _cartState.value = CartState(error = result.message ?: "An unexpected error occurred")
+                }
+                is Resource.Loading -> {
+                    _cartState.value = CartState(isLoading = true)
+                }
+            }
+        }.launchIn(viewModelScope)
+    }
+
+    private fun getCartFood(userId: String, foodId: String) {
+        getCartFoodUseCase(userId, foodId).onEach { result ->
             when(result) {
                 is Resource.Success -> {
                     _cartState.value = CartState(cart = result.data)

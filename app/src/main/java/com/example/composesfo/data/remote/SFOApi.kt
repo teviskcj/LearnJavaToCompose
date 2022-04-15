@@ -1,10 +1,6 @@
 package com.example.composesfo.data.remote
 
-import com.example.composesfo.data.remote.dto.CartDto
-import com.example.composesfo.data.remote.dto.FoodDto
-import com.example.composesfo.data.remote.dto.OrderDto
-import com.example.composesfo.data.remote.dto.UserDto
-import com.example.composesfo.domain.model.Cart
+import com.example.composesfo.data.remote.dto.*
 import retrofit2.http.*
 
 interface SFOApi {
@@ -24,6 +20,9 @@ interface SFOApi {
     @PUT("/Cart List/User View/{userId}/Foods/{foodId}.json")
     suspend fun createCart(@Path("userId") userId: String, @Path("foodId") foodId: String, @Body cartDto: CartDto)
 
+    @GET("/Cart List/User View/{userId}/Foods/{foodId}.json")
+    suspend fun getFoodFromCart(@Path("userId") userId: String, @Path("foodId") foodId: String): CartDto
+
     @GET("/Cart List/User View/{userId}/Foods/.json")
     suspend fun getCartList(@Path("userId") userId: String): Map<String, CartDto>
 
@@ -35,5 +34,11 @@ interface SFOApi {
 
     @DELETE("/Cart List/User View/{userId}.json")
     suspend fun deleteCartList(@Path("userId") userId: String)
+
+    @GET("/E-Wallet/{userId}.json")
+    suspend fun getWalletById(@Path("userId") userId: String): WalletDto
+
+    @PUT("/E-Wallet/{userId}.json")
+    suspend fun createWallet(@Path("userId") userId: String, @Body walletDto: WalletDto)
 
 }

@@ -47,12 +47,17 @@ fun FoodDetailsScreen(
     val userPhone = dataStore.getPhone.collectAsState(initial = "")
     val userId = userPhone.value!!
 
+    val backStackRoute = navController.previousBackStackEntry?.destination?.route
+
+    
+
     Box(modifier = Modifier
         .fillMaxSize()) {
         Column(
             modifier = Modifier.padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            Text(text = CurrentUserState.cartFoodId)
 
             food?.let {
                 DisplayFoodDetail(food = food)

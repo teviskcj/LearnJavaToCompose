@@ -2,14 +2,8 @@ package com.example.composesfo.di
 
 import com.example.composesfo.common.Constants
 import com.example.composesfo.data.remote.SFOApi
-import com.example.composesfo.data.repository.CartRepositoryImpl
-import com.example.composesfo.data.repository.FoodRepositoryImpl
-import com.example.composesfo.data.repository.OrderRepositoryImpl
-import com.example.composesfo.data.repository.UserRepositoryImpl
-import com.example.composesfo.domain.repository.CartRepository
-import com.example.composesfo.domain.repository.FoodRepository
-import com.example.composesfo.domain.repository.OrderRepository
-import com.example.composesfo.domain.repository.UserRepository
+import com.example.composesfo.data.repository.*
+import com.example.composesfo.domain.repository.*
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -54,5 +48,11 @@ object AppModule {
     @Singleton
     fun provideOrderRepository(api: SFOApi): OrderRepository {
         return OrderRepositoryImpl(api)
+    }
+
+    @Provides
+    @Singleton
+    fun provideWalletRepository(api: SFOApi): WalletRepository {
+        return WalletRepositoryImpl(api)
     }
 }

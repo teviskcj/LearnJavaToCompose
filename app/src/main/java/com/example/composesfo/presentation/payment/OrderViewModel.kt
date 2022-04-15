@@ -148,7 +148,7 @@ class OrderViewModel @Inject constructor(
 
     fun createOrderId(): String {
         val randomNumber = (Math.random() * 9).toInt()
-        return getDate() + getTime() + randomNumber.toString()
+        return getDate("MMddyyyy") + getTime("mmHHss") + randomNumber.toString()
     }
 
     fun checkNullField(): Boolean {

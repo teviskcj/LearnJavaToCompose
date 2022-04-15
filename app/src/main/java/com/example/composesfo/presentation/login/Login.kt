@@ -3,9 +3,6 @@ package com.example.composesfo.presentation.login
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Lock
-import androidx.compose.material.icons.filled.Phone
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
@@ -18,8 +15,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -32,9 +27,11 @@ import com.example.composesfo.common.CurrentUserState
 import com.example.composesfo.common.StoreUserPhone
 import com.example.composesfo.common.UiEvent
 import com.example.composesfo.presentation.component.HeaderImage
+import com.example.composesfo.presentation.component.TextFieldWithIcon
+import com.example.composesfo.presentation.component.TextFieldWithShowPasswordIcon
 import com.example.composesfo.presentation.navigation.Screen
+import com.example.composesfo.presentation.ui.theme.AllButton
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
 
 @Composable
 fun LoginScreen(
@@ -108,20 +105,24 @@ fun LoginForm(
         // navigator
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceEvenly
+            horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Button(
                 onClick = { /*TODO*/ },
                 enabled = false,
                 modifier = Modifier
                     .height(60.dp)
-                    .width(150.dp)
+                    .weight(1f)
             ) {
                 Text(
                     text = "LOG IN",
                     fontSize = 22.sp
                 )
             }
+
+            Spacer(modifier = Modifier
+                .weight(0.2f)
+            )
 
             Button(
                 onClick = {
@@ -132,7 +133,7 @@ fun LoginForm(
                           } },
                 modifier = Modifier
                     .height(60.dp)
-                    .width(150.dp)
+                    .weight(1f)
             ) {
                 Text(
                     text = "REGISTER",
@@ -146,65 +147,30 @@ fun LoginForm(
             .weight(1f))
 
         // Text Field
-        OutlinedTextField(
-            value = phone,
-            onValueChange = { onPhoneChange(it) },
-            label = { stringResource(id = R.string.phone_number) },
-            singleLine = true,
-            leadingIcon = { Icon(Icons.Filled.Phone, null) },
-            trailingIcon = {
-                IconButton(
-                    onClick = { onPhoneChange("") }
-                ) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_clear),
-                        null
-                    )
-                } },
+        TextFieldWithIcon(
+            text = phone,
+            onTextChange = onPhoneChange,
+            label = stringResource(R.string.phone_number),
+            painter = painterResource(id = R.drawable.ic_phone),
+            iconColor = AllButton,
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Phone,
                 imeAction = ImeAction.Next
             )
         )
 
-        OutlinedTextField(
-            value = password,
-            onValueChange = { onPasswordChange(it) },
-            label = { stringResource(id = R.string.password) },
-            singleLine = true,
-            leadingIcon = { Icon(Icons.Filled.Lock, null) },
-            visualTransformation = if (showPassword) {
-                VisualTransformation.None
-            } else {
-                PasswordVisualTransformation()
-            },
-            trailingIcon = {
-                if (showPassword) {
-                    IconButton(
-                        onClick = { showPasswordChange(false) }
-                    ) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.ic_visibility),
-                            null
-                        )
-                    }
-                } else {
-                    IconButton(
-                        onClick = { showPasswordChange(true) }
-                    ) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.ic_visibility_off),
-                            null
-                        )
-                    }
-                }
-            },
+        TextFieldWithShowPasswordIcon(
+            text = password,
+            onTextChange = onPasswordChange,
+            label = stringResource(R.string.password),
+            painter = painterResource(id = R.drawable.ic_password),
+            iconColor = AllButton,
+            showPassword = showPassword,
+            showPasswordChange = showPasswordChange,
             keyboardOptions = KeyboardOptions(
                 imeAction = ImeAction.Done
             )
         )
-
-
 
         Spacer(modifier = Modifier
             .padding(20.dp)
@@ -226,6 +192,7 @@ fun LoginForm(
             },
             modifier = Modifier
                 .height(60.dp)
+                .fillMaxWidth()
         ) {
             Text(
                 text = "LOG IN",

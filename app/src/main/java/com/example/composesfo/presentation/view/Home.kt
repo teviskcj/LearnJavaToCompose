@@ -19,6 +19,7 @@ import com.example.composesfo.R
 import com.example.composesfo.presentation.cart.CartScreen
 import com.example.composesfo.presentation.foodMenu.MenuScreen
 import com.example.composesfo.presentation.ui.theme.AllButton
+import com.example.composesfo.presentation.wallet.WalletScreen
 
 @Composable
 fun HomeScreen(

@@ -8,25 +8,32 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import com.example.composesfo.common.StoreUserPhone
+import com.example.composesfo.R
+import com.example.composesfo.common.CurrentUserState
+import com.example.composesfo.data.remote.dto.CartDto
 import com.example.composesfo.domain.model.Cart
 import com.example.composesfo.presentation.component.TopBarTitle
+import com.example.composesfo.presentation.component.noRippleClickable
+import com.example.composesfo.presentation.foodDetails.QuantityButton
 import com.example.composesfo.presentation.navigation.Screen
 import com.example.composesfo.presentation.ui.theme.*
 
@@ -36,44 +43,70 @@ fun CartScreen(
     viewModel: CartViewModel = hiltViewModel()
 ) {
     val state = viewModel.state.value
+    val cartList = state.cartList
+    val menuItems = listOf("Edit", "Delete")
 
-    val context = LocalContext.current
-    val dataStore = StoreUserPhone(context)
-    val userPhone = dataStore.getPhone.collectAsState(initial = "")
+    val scaffoldState = rememberScaffoldState()
 
-    /*userPhone.value?.let {
-        viewModel.getCartList(it)
-    }*/
-    //viewModel.getCartList(userPhone.value.toString())
+    for (i in cartList.indices) {
+        viewModel.addItem(cartList[i].quantity.toInt())
+        viewModel.addTotalAmount(cartList[i].quantity.toInt(),cartList[i].foodPrice.toInt())
+    }
+    CurrentUserState.totalAmount = viewModel.totalAmount
 
-    Box(modifier = Modifier
-        .fillMaxSize()) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            TopBarTitle(
-                textOne = "Shopping",
-                textTwo = "Cart"
-            )
-            Spacer(modifier = Modifier.padding(10.dp))
-            CartList(cartList = state.cartList)
-            Spacer(modifier = Modifier
+
+    Scaffold(scaffoldState = scaffoldState) {
+        Box(modifier = Modifier
+            .fillMaxSize()) {
+            Column(modifier = Modifier.padding(16.dp)) {
+                TopBarTitle(
+                    textOne = "Shopping",
+                    textTwo = "Cart"
+                )
+                Spacer(modifier = Modifier.padding(10.dp))
+                CartList(
+                    cartList = state.cartList,
+                    menuItems = menuItems,
+                    expanded = viewModel.expanded,
+                    onExpandedChange = viewModel::onExpandedChange,
+                    navController = navController
+                )
+                Spacer(modifier = Modifier
                     .padding(20.dp)
                     .weight(1f)
-            )
-            ButtonWithTotalItems(navController = navController)
+                )
+                ButtonWithTotalItems(
+                    navController = navController,
+                    totalAmount = viewModel.totalAmount,
+                    totalItem = viewModel.totalItem
+                )
+            }
         }
     }
+
+
+
+
 }
 
 
 @Composable
 fun CartList(
-    cartList: List<Cart>
+    cartList: List<Cart>,
+    menuItems: List<String>,
+    expanded: Boolean,
+    onExpandedChange: (Boolean) -> Unit,
+    navController: NavController
 ) {
     LazyColumn {
         items(cartList) { cart ->
             CartListItem(
                 cart = cart,
-                backgroundColor = lightsilverbox
+                backgroundColor = lightsilverbox,
+                menuItems = menuItems,
+                expanded = expanded,
+                onExpandedChange = onExpandedChange,
+                navController = navController
             )
         }
 
@@ -83,8 +116,14 @@ fun CartList(
 @Composable
 fun CartListItem(
     cart: Cart,
-    backgroundColor: Color = Color.Transparent
+    backgroundColor: Color = Color.Transparent,
+    menuItems: List<String>,
+    expanded: Boolean,
+    onExpandedChange: (Boolean) -> Unit,
+    navController: NavController
 ) {
+    val cartDto = cart
+
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween,
@@ -92,7 +131,7 @@ fun CartListItem(
     ) {
         Column(
             modifier = Modifier
-                .fillMaxWidth()
+                .weight(1f)
                 .padding(horizontal = 16.dp),
             horizontalAlignment = Alignment.Start,
             verticalArrangement = Arrangement.SpaceEvenly
@@ -148,13 +187,41 @@ fun CartListItem(
                 }
             }
         }
+        IconButton(
+            onClick = { onExpandedChange(true) }
+        ) {
+            Icon(
+                painter = painterResource(id = R.drawable.ic_more_vert),
+                null
+            )
+        }
+    }
+    DropdownMenu(
+        expanded = expanded,
+        offset = DpOffset((-40).dp, (40).dp),
+        onDismissRequest = { onExpandedChange(false) }) {
+        menuItems.forEach {
+            DropdownMenuItem(onClick = {
+                if (it == "Edit") {
+                    navController.navigate(Screen.FoodDetailsScreen.route + "/${cart.foodName}")
+                    CurrentUserState.cartFoodId = cart.foodName
+                } else {
+
+                }
+                onExpandedChange(false)
+            }) {
+                Text(text = it)
+            }
+        }
     }
     Spacer(modifier = Modifier.padding(10.dp))
 }
 
 @Composable
 fun ButtonWithTotalItems(
-    navController: NavController
+    navController: NavController,
+    totalItem: Int,
+    totalAmount: Int
 ) {
     Column(modifier = Modifier.fillMaxWidth()) {
         Divider(color = lightGrey, thickness = 2.dp)
@@ -165,13 +232,13 @@ fun ButtonWithTotalItems(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = "3 Items",
+                text = "$totalItem Items",
                 fontSize = 14.sp,
                 color = lightGrey
             )
 
             Text(
-                text = "$650.00",
+                text = "RM $totalAmount.00",
                 fontSize = 18.sp,
                 color = titleTextColor,
                 fontWeight = FontWeight.Bold

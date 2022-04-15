@@ -12,6 +12,10 @@ class CartRepositoryImpl @Inject constructor(
         return api.createCart(userId, foodId, cartDto)
     }
 
+    override suspend fun getFoodFromCart(userId: String, foodId: String): CartDto {
+        return api.getFoodFromCart(userId, foodId)
+    }
+
     override suspend fun getCartList(userId: String): Map<String, CartDto> {
         return api.getCartList(userId)
     }

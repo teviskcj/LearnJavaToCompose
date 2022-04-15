@@ -9,7 +9,10 @@ import androidx.lifecycle.viewModelScope
 import com.example.composesfo.common.Resource
 import com.example.composesfo.common.UiEvent
 import com.example.composesfo.data.remote.dto.UserDto
+import com.example.composesfo.data.remote.dto.WalletDto
+import com.example.composesfo.domain.useCase.CreateWalletUseCase
 import com.example.composesfo.domain.useCase.UserRegisterUseCase
+import com.example.composesfo.presentation.wallet.WalletState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.launchIn
@@ -20,10 +23,14 @@ import javax.inject.Inject
 
 @HiltViewModel
 class RegisterViewModel @Inject constructor(
-    private val userRegisterUseCase: UserRegisterUseCase
+    private val userRegisterUseCase: UserRegisterUseCase,
+    private val createWalletUseCase: CreateWalletUseCase
 ) : ViewModel() {
     private val _state = mutableStateOf(RegisterState())
     val state: State<RegisterState> = _state
+
+    private val _stateWallet = mutableStateOf(WalletState())
+    val stateWallet: State<WalletState> = _stateWallet
 
     private val _uiEvent =  Channel<UiEvent>()
     val uiEvent = _uiEvent.receiveAsFlow()
@@ -48,6 +55,22 @@ class RegisterViewModel @Inject constructor(
                 }
                 is Resource.Loading -> {
                     _state.value = RegisterState(isLoading = true)
+                }
+            }
+        }.launchIn(viewModelScope)
+    }
+
+    fun createWallet(userId: String, walletDto: WalletDto) {
+        createWalletUseCase(userId, walletDto).onEach { result ->
+            when(result) {
+                is Resource.Success -> {
+                    _stateWallet.value = WalletState(wallet = result.data)
+                }
+                is Resource.Error -> {
+                    _stateWallet.value = WalletState(error = result.message ?: "An unexpected error occurred")
+                }
+                is Resource.Loading -> {
+                    _stateWallet.value = WalletState(isLoading = true)
                 }
             }
         }.launchIn(viewModelScope)

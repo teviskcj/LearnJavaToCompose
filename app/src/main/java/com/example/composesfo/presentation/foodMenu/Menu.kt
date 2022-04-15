@@ -136,7 +136,7 @@ fun FoodList(
             FoodListItem(
                 food = food,
                 onItemClick = {
-                    navController.navigate(route = Screen.FoodDetailsScreen.route + "/${food.foodName}")
+                    navController.navigate(route = Screen.FoodDetailsScreen.route + "/${it.foodName}")
                 }
             )
         }
