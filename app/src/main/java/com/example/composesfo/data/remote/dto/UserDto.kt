@@ -2,6 +2,7 @@ package com.example.composesfo.data.remote.dto
 
 import com.example.composesfo.domain.model.Food
 import com.example.composesfo.domain.model.UserLogin
+import com.example.composesfo.domain.model.UserProfile
 import com.example.composesfo.domain.model.UserRegister
 
 data class UserDto(
@@ -22,5 +23,12 @@ fun UserDto.toUserRegister(): UserRegister {
         name = name,
         password = password,
         phone = phone,
+    )
+}
+
+fun UserDto.toUserProfile(): UserProfile {
+    return UserProfile(
+        name = name,
+        password = password,
     )
 }

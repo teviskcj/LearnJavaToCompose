@@ -12,4 +12,6 @@ interface CartRepository {
     suspend fun createCartOrder(userId: String, orderId: String, foodId: String, cartDto: CartDto)
 
     suspend fun deleteCartList(userId: String)
+
+    suspend fun deleteCartItem(userId: String, foodId: String)
 }

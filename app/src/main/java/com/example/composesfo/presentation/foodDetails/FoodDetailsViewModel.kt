@@ -3,7 +3,6 @@ package com.example.composesfo.presentation.foodDetails
 import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
@@ -11,14 +10,12 @@ import androidx.lifecycle.viewModelScope
 import com.example.composesfo.common.Constants
 import com.example.composesfo.common.CurrentUserState
 import com.example.composesfo.common.Resource
-import com.example.composesfo.common.UiEvent
 import com.example.composesfo.data.remote.dto.CartDto
-import com.example.composesfo.data.remote.dto.UserDto
 import com.example.composesfo.domain.useCase.CreateCartUseCase
-import com.example.composesfo.domain.useCase.GetCartFoodUseCase
+import com.example.composesfo.domain.useCase.GetCartUseCase
 import com.example.composesfo.domain.useCase.GetFoodUseCase
+import com.example.composesfo.presentation.cart.CartListState
 import com.example.composesfo.presentation.cart.CartState
-import com.example.composesfo.presentation.register.RegisterState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -28,7 +25,7 @@ import javax.inject.Inject
 class FoodDetailsViewModel @Inject constructor(
     private val getFoodUseCase: GetFoodUseCase,
     private val createCartUseCase: CreateCartUseCase,
-    private val getCartFoodUseCase: GetCartFoodUseCase,
+    private val getCartUseCase: GetCartUseCase,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
@@ -38,21 +35,16 @@ class FoodDetailsViewModel @Inject constructor(
     private val _cartState = mutableStateOf(CartState())
     val cartState: State<CartState> = _cartState
 
-    var stateQuantity by mutableStateOf(0)
+    private val _cartListState = mutableStateOf(CartListState())
+    val cartListState: State<CartListState> = _cartListState
+
+    var stateQuantity by mutableStateOf(1)
         private set
 
     init {
-        stateQuantity = 1
         savedStateHandle.get<String>(Constants.PARAM_FOOD_ID)?.let { foodId ->
             getFood(foodId)
-        }
-        if (CurrentUserState.cartFoodId.isNotBlank()) {
-            getFood(CurrentUserState.cartFoodId)
-            getCartFood(CurrentUserState.userId, CurrentUserState.cartFoodId)
-            _cartState.value.cart?.let {
-                stateQuantity = it.quantity.toInt()
-            }
-
+            getCartList(CurrentUserState.userId)
         }
     }
 
@@ -88,17 +80,17 @@ class FoodDetailsViewModel @Inject constructor(
         }.launchIn(viewModelScope)
     }
 
-    private fun getCartFood(userId: String, foodId: String) {
-        getCartFoodUseCase(userId, foodId).onEach { result ->
+    private fun getCartList(userId: String) {
+        getCartUseCase(userId).onEach { result ->
             when(result) {
                 is Resource.Success -> {
-                    _cartState.value = CartState(cart = result.data)
+                    _cartListState.value = CartListState(cartList = result.data ?: emptyList())
                 }
                 is Resource.Error -> {
-                    _cartState.value = CartState(error = result.message ?: "An unexpected error occurred")
+                    _cartListState.value = CartListState(error = result.message ?: "An unexpected error occurred")
                 }
                 is Resource.Loading -> {
-                    _cartState.value = CartState(isLoading = true)
+                    _cartListState.value = CartListState(isLoading = true)
                 }
             }
         }.launchIn(viewModelScope)
@@ -118,5 +110,9 @@ class FoodDetailsViewModel @Inject constructor(
             return false
         }
         return true
+    }
+
+    fun onQuantityChange(quantity: Int) {
+        stateQuantity = quantity
     }
 }

@@ -11,6 +11,12 @@ interface SFOApi {
     @GET("/Users/.json")
     suspend fun getUsers(): Map<String, UserDto>
 
+    @GET("/Users/{userId}.json")
+    suspend fun getUserById(@Path("userId") userId: String): UserDto
+
+    @PUT("/Users/{userId}.Security Questions.json")
+    suspend fun createQuestion(@Path("userId") userId: String, @Body questionDto: QuestionDto)
+
     @GET("/Foods/.json")
     suspend fun getFoods(): Map<String, FoodDto>
 
@@ -34,6 +40,9 @@ interface SFOApi {
 
     @DELETE("/Cart List/User View/{userId}.json")
     suspend fun deleteCartList(@Path("userId") userId: String)
+
+    @DELETE("/Cart List/User View/{userId}/Foods/{foodId}.json")
+    suspend fun deleteCartItem(@Path("userId") userId: String, @Path("foodId") foodId: String)
 
     @GET("/E-Wallet/{userId}.json")
     suspend fun getWalletById(@Path("userId") userId: String): WalletDto

@@ -8,7 +8,7 @@ import retrofit2.HttpException
 import java.io.IOException
 import javax.inject.Inject
 
-class DeleteCartListUseCase  @Inject constructor(
+class DeleteCartListUseCase @Inject constructor(
     private val repository: CartRepository
 ) {
     operator fun invoke(userId: String): Flow<Resource<String>> = flow {

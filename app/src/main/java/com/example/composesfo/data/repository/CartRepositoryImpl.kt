@@ -27,4 +27,8 @@ class CartRepositoryImpl @Inject constructor(
     override suspend fun deleteCartList(userId: String) {
         return api.deleteCartList(userId)
     }
+
+    override suspend fun deleteCartItem(userId: String, foodId: String) {
+        return api.deleteCartItem(userId, foodId)
+    }
 }

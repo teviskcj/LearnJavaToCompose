@@ -8,32 +8,27 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.composesfo.R
 import com.example.composesfo.common.CurrentUserState
-import com.example.composesfo.data.remote.dto.CartDto
 import com.example.composesfo.domain.model.Cart
-import com.example.composesfo.presentation.component.TopBarTitle
-import com.example.composesfo.presentation.component.noRippleClickable
-import com.example.composesfo.presentation.foodDetails.QuantityButton
 import com.example.composesfo.presentation.navigation.Screen
 import com.example.composesfo.presentation.ui.theme.*
 
@@ -44,32 +39,45 @@ fun CartScreen(
 ) {
     val state = viewModel.state.value
     val cartList = state.cartList
-    val menuItems = listOf("Edit", "Delete")
+    var totalAmount =0
+    var totalItem =0
 
     val scaffoldState = rememberScaffoldState()
 
     for (i in cartList.indices) {
-        viewModel.addItem(cartList[i].quantity.toInt())
-        viewModel.addTotalAmount(cartList[i].quantity.toInt(),cartList[i].foodPrice.toInt())
+        val quantity = viewModel.addItem(cartList[i].quantity.toInt())
+        val subtotal = viewModel.addTotalAmount(cartList[i].quantity.toInt(),cartList[i].foodPrice.toInt())
+        totalItem += quantity
+        totalAmount += subtotal
     }
-    CurrentUserState.totalAmount = viewModel.totalAmount
+
+    if (viewModel.openDialog) {
+        ConfirmDialog(
+            onConfirmClicked = {
+                viewModel.deleteCartList(CurrentUserState.userId)
+                viewModel.onOpenDialogChange(false)
+            }, onDismiss =  {
+                viewModel.onOpenDialogChange(false)
+            }
+        )
+    }
 
 
     Scaffold(scaffoldState = scaffoldState) {
         Box(modifier = Modifier
             .fillMaxSize()) {
             Column(modifier = Modifier.padding(16.dp)) {
-                TopBarTitle(
+                TopBarWithDeleteCart(
                     textOne = "Shopping",
-                    textTwo = "Cart"
+                    textTwo = "Cart",
+                    painter = painterResource(id = R.drawable.ic_delete_cart),
+                    onOpenDialogChange = viewModel::onOpenDialogChange
                 )
                 Spacer(modifier = Modifier.padding(10.dp))
                 CartList(
                     cartList = state.cartList,
-                    menuItems = menuItems,
-                    expanded = viewModel.expanded,
-                    onExpandedChange = viewModel::onExpandedChange,
-                    navController = navController
+                    navController = navController,
+                    onItemDelete = viewModel::deleteCartItem
                 )
                 Spacer(modifier = Modifier
                     .padding(20.dp)
@@ -77,8 +85,8 @@ fun CartScreen(
                 )
                 ButtonWithTotalItems(
                     navController = navController,
-                    totalAmount = viewModel.totalAmount,
-                    totalItem = viewModel.totalItem
+                    totalAmount = totalAmount,
+                    totalItem = totalItem
                 )
             }
         }
@@ -89,24 +97,61 @@ fun CartScreen(
 
 }
 
+@Composable
+fun TopBarWithDeleteCart(
+    textOne: String,
+    textTwo: String,
+    painter: Painter,
+    onOpenDialogChange: (Boolean) -> Unit
+) {
+    Row(
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.Bottom,
+        modifier = Modifier.fillMaxWidth(),
+    ) {
+        Column {
+            Text(
+                text = textOne,
+                fontStyle = FontStyle.Italic,
+                fontSize = 30.sp
+            )
+
+            Text(
+                text = textTwo,
+                fontWeight = FontWeight.Bold,
+                fontStyle = FontStyle.Italic,
+                fontSize = 30.sp
+            )
+        }
+
+        IconButton(
+            onClick = {
+                onOpenDialogChange(true)
+            }
+        ) {
+            Icon(
+                painter = painter,
+                contentDescription = "Delete Cart Item",
+                tint = AllButton
+            )
+        }
+    }
+
+}
 
 @Composable
 fun CartList(
     cartList: List<Cart>,
-    menuItems: List<String>,
-    expanded: Boolean,
-    onExpandedChange: (Boolean) -> Unit,
-    navController: NavController
+    navController: NavController,
+    onItemDelete: (String, String) -> Unit
 ) {
     LazyColumn {
         items(cartList) { cart ->
             CartListItem(
                 cart = cart,
                 backgroundColor = lightsilverbox,
-                menuItems = menuItems,
-                expanded = expanded,
-                onExpandedChange = onExpandedChange,
-                navController = navController
+                navController = navController,
+                deleteCartItem = (onItemDelete)
             )
         }
 
@@ -117,13 +162,9 @@ fun CartList(
 fun CartListItem(
     cart: Cart,
     backgroundColor: Color = Color.Transparent,
-    menuItems: List<String>,
-    expanded: Boolean,
-    onExpandedChange: (Boolean) -> Unit,
-    navController: NavController
+    navController: NavController,
+    deleteCartItem: (String, String) -> Unit
 ) {
-    val cartDto = cart
-
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween,
@@ -188,30 +229,25 @@ fun CartListItem(
             }
         }
         IconButton(
-            onClick = { onExpandedChange(true) }
+            onClick = {
+                navController.navigate(Screen.FoodDetailsScreen.route + "/${cart.foodName}")
+            }
         ) {
             Icon(
-                painter = painterResource(id = R.drawable.ic_more_vert),
-                null
+                painter = painterResource(id = R.drawable.ic_edit),
+                contentDescription = "Edit Cart Item",
+                tint = AllButton
             )
         }
-    }
-    DropdownMenu(
-        expanded = expanded,
-        offset = DpOffset((-40).dp, (40).dp),
-        onDismissRequest = { onExpandedChange(false) }) {
-        menuItems.forEach {
-            DropdownMenuItem(onClick = {
-                if (it == "Edit") {
-                    navController.navigate(Screen.FoodDetailsScreen.route + "/${cart.foodName}")
-                    CurrentUserState.cartFoodId = cart.foodName
-                } else {
 
-                }
-                onExpandedChange(false)
-            }) {
-                Text(text = it)
-            }
+        IconButton(
+            onClick = { deleteCartItem(CurrentUserState.userId, cart.foodName) }
+        ) {
+            Icon(
+                painter = painterResource(id = R.drawable.ic_delete_cart_item),
+                contentDescription = "Delete Cart Item",
+                tint = AllButton
+            )
         }
     }
     Spacer(modifier = Modifier.padding(10.dp))
@@ -267,6 +303,48 @@ fun ButtonWithTotalItems(
             )
         }
 
+    }
+}
+
+@Composable
+fun ConfirmDialog(
+    onConfirmClicked: (String) -> Unit,
+    onDismiss: () -> Unit,
+) {
+    Dialog(
+        onDismissRequest = onDismiss,
+    ) {
+        Surface(
+            shape = MaterialTheme.shapes.medium,
+            color = MaterialTheme.colors.surface,
+        ) {
+            Column(modifier = Modifier.padding(16.dp)) {
+                // TITLE
+                Text(text = "Delete Shopping Cart", style = MaterialTheme.typography.subtitle1)
+
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(weight = 1f, fill = false)
+                        .padding(vertical = 16.dp)
+                ) {
+                    Text(
+                        text = "Are you sure to delete all cart items?",
+                        style = MaterialTheme.typography.body2
+                    )
+                }
+
+                // BUTTONS
+                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
+                    TextButton(onClick = onDismiss) {
+                        Text(text = "Cancel")
+                    }
+                    TextButton(onClick = { onConfirmClicked(CurrentUserState.userId) }) {
+                        Text(text = "OK")
+                    }
+                }
+            }
+        }
     }
 }
 
