@@ -1,17 +1,13 @@
-package com.example.composesfo.presentation.view
+package com.example.composesfo.presentation.wallet
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -29,7 +25,6 @@ import com.example.composesfo.presentation.component.TopBarTitle
 import com.example.composesfo.presentation.navigation.Screen
 import com.example.composesfo.presentation.ui.theme.AllButton
 import com.example.composesfo.presentation.ui.theme.white
-import com.example.composesfo.presentation.wallet.WalletViewModel
 
 @Composable
 fun ReloadFormScreen(
