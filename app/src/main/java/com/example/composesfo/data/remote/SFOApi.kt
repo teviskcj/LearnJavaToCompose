@@ -35,6 +35,9 @@ interface SFOApi {
     @PUT("/Orders/{userId}/{orderId}.json")
     suspend fun createOrder(@Path("userId") userId: String, @Path("orderId") orderId: String, @Body orderDto: OrderDto)
 
+    @GET("/Orders/{userId}/.json")
+    suspend fun getOrders(@Path("userId") userId: String): Map<String, OrderDto>
+
     @PUT("/Cart List/Admin View/{userId}/{orderId}/{foodId}.json")
     suspend fun createCartOrder(@Path("userId") userId: String, @Path("orderId") orderId: String, @Path("foodId") foodId: String, @Body cartDto: CartDto)
 

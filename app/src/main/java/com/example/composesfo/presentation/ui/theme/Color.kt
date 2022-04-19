@@ -11,6 +11,7 @@ val AllButton = Color(0xeeeb6c71)
 val frameColor = Color(0xfffffafa)
 val admin_dominant = Color(0x555071bd)
 val til_color = Color(0x0000ad6b)
+val green = Color(0,128,0)
 
 val white = Color(0XFFFFFFFF)
 val background = Color(0XFFFFFFFF)

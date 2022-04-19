@@ -1,144 +1,169 @@
 package com.example.composesfo.presentation.view
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
 import androidx.compose.material.Card
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.layoutId
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.ConstraintSet
 import androidx.constraintlayout.compose.Dimension
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.example.composesfo.R
+import com.example.composesfo.common.CurrentUserState
+import com.example.composesfo.domain.model.OrderView
+import com.example.composesfo.presentation.component.TopBarTitle
 import com.example.composesfo.presentation.navigation.Screen
-import com.example.composesfo.presentation.ui.theme.AllButton
+import com.example.composesfo.presentation.order.OrdersViewModel
+import com.example.composesfo.presentation.ui.theme.*
 
 @Composable
 fun OrderScreen(
-    navController: NavController
+    navController: NavController,
+    viewModel: OrdersViewModel = hiltViewModel()
 ) {
-    Surface(color = Color.White) {
-        ConstraintLayout(modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
-            constraintSet = orderScreenConstraintSet()
-        ) {
-            Text(
-                text = "Current Order",
-                fontSize = 30.sp,
-                modifier = Modifier.layoutId("currentOrder")
+    val state = viewModel.state.value
+
+    Box(modifier = Modifier
+        .fillMaxSize()) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            TopBarTitle(
+                textOne = "Current",
+                textTwo = "Order"
+            )
+            Spacer(modifier = Modifier.padding(10.dp))
+            OrderList(
+                orderList = viewModel.orderList,
+                navController = navController,
+                getStateColor = viewModel::getStateColor,
+                getStateName = viewModel::getStateName
             )
 
-            LazyColumn(
-                modifier = Modifier
-                    .layoutId("currentList")
+        }
+    }
 
-            ) {
-                items(count = 2){
-                    OrderItemCard("xxx", "01-01-2022",0, navController)
-                }
 
-            }
+}
 
-            Text(
-                text = "Past Order",
-                fontSize = 30.sp,
-                modifier = Modifier.layoutId("pastOrder")
+@Composable
+fun OrderList(
+    orderList: List<OrderView>,
+    navController: NavController,
+    getStateColor: (String) -> Color,
+    getStateName: (String) -> String
+) {
+    LazyColumn {
+        items(orderList) { orderView ->
+            OrderItemCard(
+                navController = navController,
+                orderView = orderView,
+                getStateColor = getStateColor,
+                getStateName = getStateName
             )
-
-            LazyColumn(
-                modifier = Modifier
-                    .layoutId("pastList")
-
-            ) {
-                items(count = 2){
-                    OrderItemCard("xxx", "01-01-2022",0, navController)
-                }
-
-            }
         }
     }
 }
 
 @Composable
-fun OrderItemCard(orderNo: String, time: String, amount: Int, navController: NavController) {
-    Card(backgroundColor = AllButton,
+fun OrderItemCard(
+    navController: NavController,
+    orderView: OrderView,
+    getStateColor: (String) -> Color,
+    getStateName: (String) -> String
+) {
+    Card(
+        shape = RoundedCornerShape(8.dp),
         modifier = Modifier
-            .padding(24.dp)
             .fillMaxWidth()
-            .clickable { }
+            .padding(vertical = 10.dp)
+            .clickable { navController.navigate(route = Screen.OrderDetailsScreen.route + "/${orderView.orderID}") }
     ) {
         Column(
+            verticalArrangement = Arrangement.spacedBy(10.dp),
             modifier = Modifier.padding(10.dp)
         ) {
-            Text(
-                text = "Order No : $orderNo",
-                color = Color.White,
-                fontSize = 18.sp
-            )
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Card(
+                    shape = RoundedCornerShape(8.dp),
+                    modifier = Modifier
+                        .size(100.dp, 100.dp)
+                        .padding(end = 10.dp, bottom = 10.dp)
+                ) {
+                    Image(
+                        painter = painterResource(id = R.drawable.sample_food),
+                        contentDescription = null,
+                        contentScale = ContentScale.Crop
+                    )
+                }
+                Text(
+                    buildAnnotatedString {
+                        withStyle(
+                            style = SpanStyle(
+                                color = lightblack,
+                                fontSize = 18.sp
+                            )
+                        ) {
+                            append("Order No : \n")
+                        }
+                        withStyle(
+                            style = SpanStyle(
+                                titleTextColor,
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 16.sp
+                            )
+                        ) {
+                            append(orderView.orderID)
+                        }
+                    }
+                )
 
-            Text(
-                text = "Time : $time",
-                color = Color.White,
-                fontSize = 18.sp
-            )
-            Text(
-                text = "Amount: $amount.00 MYR",
-                color = Color.White,
-                fontSize = 18.sp
-            )
+                Text(
+                    text = getStateName(orderView.state),
+                    color = getStateColor(orderView.state)
+                )
+            }
 
-            Button(
-                onClick = { navController.navigate(Screen.OrderDetailsScreen.route) },
-                modifier = Modifier
-                    .padding(top = 5.dp, bottom = 5.dp)
-                    .height(60.dp)
-                    .fillMaxWidth()
-                    .padding(start = 30.dp, end = 30.dp)
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.Bottom
             ) {
                 Text(
-                    text = "View Details",
+                    text = "${orderView.date}, ${orderView.time}",
+                    color = subTitleTextColor
+                )
+
+                Text(
+                    text = "RM ${orderView.totalAmount}.00",
                     fontSize = 22.sp
                 )
             }
-        }
 
-
-    }
-}
-
-private fun orderScreenConstraintSet(): ConstraintSet {
-    return ConstraintSet {
-        val currentOrder =  createRefFor("currentOrder")
-        val currentList = createRefFor("currentList")
-        val pastOrder = createRefFor("pastOrder")
-        val pastList = createRefFor("pastList")
-
-        constrain(currentOrder) {
-            top.linkTo(parent.top, 20.dp)
-        }
-
-        constrain(currentList) {
-            top.linkTo(currentOrder.bottom, 20.dp)
-            width = Dimension.fillToConstraints
-        }
-
-        constrain(pastOrder) {
-            top.linkTo(currentList.bottom, 20.dp)
-        }
-
-        constrain(pastList) {
-            top.linkTo(pastOrder.bottom, 20.dp)
-            width = Dimension.fillToConstraints
         }
     }
 }

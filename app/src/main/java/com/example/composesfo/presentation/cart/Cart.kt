@@ -44,6 +44,7 @@ fun CartScreen(
 
     val scaffoldState = rememberScaffoldState()
 
+
     for (i in cartList.indices) {
         val quantity = viewModel.addItem(cartList[i].quantity.toInt())
         val subtotal = viewModel.addTotalAmount(cartList[i].quantity.toInt(),cartList[i].foodPrice.toInt())
@@ -75,7 +76,7 @@ fun CartScreen(
                 )
                 Spacer(modifier = Modifier.padding(10.dp))
                 CartList(
-                    cartList = state.cartList,
+                    cartList = viewModel.cartList,
                     navController = navController,
                     onItemDelete = viewModel::deleteCartItem
                 )
@@ -241,7 +242,9 @@ fun CartListItem(
         }
 
         IconButton(
-            onClick = { deleteCartItem(CurrentUserState.userId, cart.foodName) }
+            onClick = {
+                deleteCartItem(CurrentUserState.userId, cart.foodName)
+            }
         ) {
             Icon(
                 painter = painterResource(id = R.drawable.ic_delete_cart_item),
@@ -283,6 +286,7 @@ fun ButtonWithTotalItems(
 
         Button(
             onClick = {
+                CurrentUserState.totalAmount = totalAmount
                 navController.navigate(Screen.PaymentScreen.route)
             },
             colors = ButtonDefaults.buttonColors(backgroundColor = AllButton),

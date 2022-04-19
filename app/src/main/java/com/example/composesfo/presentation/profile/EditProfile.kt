@@ -1,19 +1,15 @@
-package com.example.composesfo.presentation.view
+package com.example.composesfo.presentation.profile
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.layoutId
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -21,20 +17,18 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.constraintlayout.compose.ConstraintLayout
-import androidx.constraintlayout.compose.ConstraintSet
-import androidx.constraintlayout.compose.Dimension
+import androidx.compose.ui.unit.toSize
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.composesfo.R
 import com.example.composesfo.common.CurrentUserState
+import com.example.composesfo.data.remote.dto.QuestionDto
 import com.example.composesfo.data.remote.dto.UserDto
+import com.example.composesfo.presentation.component.ExposedDropMenuStateHolder
 import com.example.composesfo.presentation.component.TextFieldWithIcon
 import com.example.composesfo.presentation.component.TopBarTitle
-import com.example.composesfo.presentation.foodDetails.FoodDetailsViewModel
-import com.example.composesfo.presentation.navigation.Screen
-import com.example.composesfo.presentation.profile.ProfileViewModel
+import com.example.composesfo.presentation.component.rememberExposedMenuStateHolder
 import com.example.composesfo.presentation.ui.theme.AllButton
 import com.example.composesfo.presentation.ui.theme.white
 
@@ -45,6 +39,8 @@ fun EditProfileScreen(
 ) {
     val state = viewModel.state.value
     val userProfile = state.userProfile
+    val stateHolder = rememberExposedMenuStateHolder()
+    val stateHolderTwo = rememberExposedMenuStateHolder()
 
     if (viewModel.showNameField) {
         userProfile?.let {
@@ -76,7 +72,10 @@ fun EditProfileScreen(
             answerTwo = viewModel.answerTwo,
             onAnswerOneChange = viewModel::onAnswerOneChange,
             onAnswerTwoChange = viewModel::onAnswerTwoChange,
-            onShowQuestionFieldChange = viewModel::onShowNameFieldChange
+            onShowQuestionFieldChange = viewModel::onShowNameFieldChange,
+            stateHolder = stateHolder,
+            stateHolderTwo = stateHolderTwo,
+            createQuestion = viewModel::createQuestion
         )
     }
     Box(modifier = Modifier
@@ -428,8 +427,13 @@ fun SetQuestionField(
     answerTwo: String,
     onAnswerOneChange: (String) -> Unit,
     onAnswerTwoChange: (String) -> Unit,
-    onShowQuestionFieldChange: (Boolean) -> Unit
+    onShowQuestionFieldChange: (Boolean) -> Unit,
+    stateHolder: ExposedDropMenuStateHolder,
+    stateHolderTwo: ExposedDropMenuStateHolder,
+    createQuestion: (String, QuestionDto) -> Unit
 ) {
+
+
     Card(modifier = Modifier
         .fillMaxSize()
     ) {
@@ -442,11 +446,20 @@ fun SetQuestionField(
                 fontSize = 20.sp,
             )
 
+            Text(
+                text = "You can set up to two questions",
+                fontSize = 20.sp,
+            )
+
+            ExposedDropdownMenu(stateHolder = stateHolder)
+
             TextFieldWithIcon(
                 text = answerOne,
                 onTextChange = onAnswerOneChange,
                 label = "Answer 1"
             )
+
+            ExposedDropdownMenu(stateHolder = stateHolderTwo)
 
             TextFieldWithIcon(
                 text = answerTwo,
@@ -483,6 +496,12 @@ fun SetQuestionField(
 
             Button(
                 onClick = {
+                    val questionDto = QuestionDto(
+                        answer1 = answerOne,
+                        answer2 = answerTwo
+                    )
+
+                    createQuestion(CurrentUserState.userId, questionDto)
                 },
                 colors = ButtonDefaults.buttonColors(backgroundColor = AllButton),
                 modifier = Modifier
@@ -500,6 +519,58 @@ fun SetQuestionField(
                     style = MaterialTheme.typography.button,
                     modifier = Modifier.padding(top = 8.dp, bottom = 8.dp)
                 )
+            }
+        }
+    }
+}
+
+@Composable
+fun ExposedDropdownMenu(stateHolder: ExposedDropMenuStateHolder) {
+    Column (
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Box (
+            modifier = Modifier.fillMaxWidth()
+        )  {
+            OutlinedTextField(
+                value = stateHolder.value,
+                onValueChange = {},
+                readOnly = true,
+                label = { Text(text = "Question 1") },
+                trailingIcon = {
+                    Icon(
+                        painter = painterResource(id = stateHolder.icon),
+                        contentDescription = null,
+                        modifier = Modifier.clickable {
+                            stateHolder.onEnabledChange(!stateHolder.enabled)
+                        }
+                    )
+                },
+                modifier = Modifier
+                    .onGloballyPositioned {
+                        stateHolder.onSizeChange(it.size.toSize())
+                    }
+                    .fillMaxWidth()
+            )
+
+            DropdownMenu(
+                expanded = stateHolder.enabled,
+                onDismissRequest = {
+                    stateHolder.onEnabledChange(false)
+                },
+                modifier = Modifier.width(with(LocalDensity.current){stateHolder.size.width.toDp()})
+            ) {
+                stateHolder.items.forEachIndexed { index, s ->
+                    DropdownMenuItem(
+                        onClick = {
+                            stateHolder.onSelectedIndexChange(index)
+                            stateHolder.onEnabledChange(false)
+                        }
+                    ) {
+                        Text(text = s)
+                    }
+                }
+
             }
         }
     }

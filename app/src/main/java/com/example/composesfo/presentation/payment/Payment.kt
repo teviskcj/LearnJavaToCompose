@@ -21,6 +21,7 @@ import com.example.composesfo.common.CurrentUserState
 import com.example.composesfo.common.UiEvent
 import com.example.composesfo.data.remote.dto.CartDto
 import com.example.composesfo.data.remote.dto.OrderDto
+import com.example.composesfo.data.remote.dto.WalletDto
 import com.example.composesfo.presentation.component.TextFieldWithIcon
 import com.example.composesfo.presentation.component.getDate
 import com.example.composesfo.presentation.component.getTime
@@ -34,6 +35,7 @@ fun PaymentScreen(
     viewModel: OrderViewModel = hiltViewModel()
 ) {
     val state = viewModel.stateCart.value
+    val wallet = viewModel.stateWallet.value.wallet
     val scaffoldState = rememberScaffoldState()
 
     LaunchedEffect(key1 = true) {
@@ -75,7 +77,7 @@ fun PaymentScreen(
                             val orderDto = OrderDto(
                                 address = viewModel.address,
                                 city = viewModel.city,
-                                date = getDate("MM:dd:yyyy"),
+                                date = getDate("MM/dd/yyyy"),
                                 time = getTime("mm:HH:ss"),
                                 longitude = 0.0,
                                 latitude = 0.0,
@@ -107,6 +109,17 @@ fun PaymentScreen(
                                 )
 
                                 viewModel.deleteCartList(CurrentUserState.userId)
+                            }
+
+                            wallet?.let {
+                                val walletAmount = wallet.walletAmount - CurrentUserState.totalAmount
+                                if (walletAmount > 0) {
+                                    val walletDto = WalletDto(
+                                        phone = wallet.phone,
+                                        walletAmount = walletAmount
+                                    )
+                                    viewModel.createWallet(CurrentUserState.userId, walletDto)
+                                }
                             }
 
                             if (viewModel.isOrderSuccessful(viewModel.stateOrder.value.error)) {

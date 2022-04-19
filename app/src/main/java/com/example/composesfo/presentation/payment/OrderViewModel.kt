@@ -11,15 +11,14 @@ import com.example.composesfo.common.Resource
 import com.example.composesfo.common.UiEvent
 import com.example.composesfo.data.remote.dto.CartDto
 import com.example.composesfo.data.remote.dto.OrderDto
-import com.example.composesfo.domain.useCase.CreateCartOrderUseCase
-import com.example.composesfo.domain.useCase.CreateOrderUseCase
-import com.example.composesfo.domain.useCase.DeleteCartListUseCase
-import com.example.composesfo.domain.useCase.GetCartUseCase
+import com.example.composesfo.data.remote.dto.WalletDto
+import com.example.composesfo.domain.useCase.*
 import com.example.composesfo.presentation.cart.CartListState
 import com.example.composesfo.presentation.cart.CartState
 import com.example.composesfo.presentation.cart.DeleteCartState
 import com.example.composesfo.presentation.component.getDate
 import com.example.composesfo.presentation.component.getTime
+import com.example.composesfo.presentation.wallet.WalletState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.launchIn
@@ -33,7 +32,9 @@ class OrderViewModel @Inject constructor(
     private val createOrderUseCase: CreateOrderUseCase,
     private val getCartUseCase: GetCartUseCase,
     private val createCartOrderUseCase: CreateCartOrderUseCase,
-    private val deleteCartListUseCase: DeleteCartListUseCase
+    private val deleteCartListUseCase: DeleteCartListUseCase,
+    private val getWalletUseCase: GetWalletUseCase,
+    private val createWalletUseCase: CreateWalletUseCase
 ) : ViewModel() {
     private val _stateOrder = mutableStateOf(OrderState())
     val stateOrder: State<OrderState> = _stateOrder
@@ -46,6 +47,9 @@ class OrderViewModel @Inject constructor(
 
     private val _stateDeleteCartList = mutableStateOf(DeleteCartState())
     val stateDeleteCartList: State<DeleteCartState> = _stateDeleteCartList
+
+    private val _stateWallet = mutableStateOf(WalletState())
+    val stateWallet: State<WalletState> = _stateWallet
 
     private val _uiEvent =  Channel<UiEvent>()
     val uiEvent = _uiEvent.receiveAsFlow()
@@ -64,6 +68,7 @@ class OrderViewModel @Inject constructor(
 
     init {
         getCartList(CurrentUserState.userId)
+        getWallet(CurrentUserState.userId)
     }
 
     fun createOrder(userId: String, orderId: String, orderDto: OrderDto) {
@@ -125,6 +130,38 @@ class OrderViewModel @Inject constructor(
                 }
                 is Resource.Loading -> {
                     _stateDeleteCartList.value = DeleteCartState(isLoading = true)
+                }
+            }
+        }.launchIn(viewModelScope)
+    }
+
+    private fun getWallet(userId: String) {
+        getWalletUseCase(userId).onEach { result ->
+            when(result) {
+                is Resource.Success -> {
+                    _stateWallet.value = WalletState(wallet = result.data)
+                }
+                is Resource.Error -> {
+                    _stateWallet.value = WalletState(error = result.message ?: "An unexpected error occurred")
+                }
+                is Resource.Loading -> {
+                    _stateWallet.value = WalletState(isLoading = true)
+                }
+            }
+        }.launchIn(viewModelScope)
+    }
+
+    fun createWallet(userId: String, walletDto: WalletDto) {
+        createWalletUseCase(userId, walletDto).onEach { result ->
+            when(result) {
+                is Resource.Success -> {
+                    _stateWallet.value = WalletState(wallet = result.data)
+                }
+                is Resource.Error -> {
+                    _stateWallet.value = WalletState(error = result.message ?: "An unexpected error occurred")
+                }
+                is Resource.Loading -> {
+                    _stateWallet.value = WalletState(isLoading = true)
                 }
             }
         }.launchIn(viewModelScope)

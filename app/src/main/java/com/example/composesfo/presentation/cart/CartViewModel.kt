@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.composesfo.common.CurrentUserState
 import com.example.composesfo.common.Resource
+import com.example.composesfo.domain.model.Cart
 import com.example.composesfo.domain.useCase.DeleteCartItemUseCase
 import com.example.composesfo.domain.useCase.DeleteCartListUseCase
 import com.example.composesfo.domain.useCase.GetCartUseCase
@@ -29,6 +30,8 @@ class CartViewModel @Inject constructor(
     private val _stateDeleteCart = mutableStateOf(DeleteCartState())
     val stateDeleteCart: State<DeleteCartState> = _stateDeleteCart
 
+    var cartList = mutableListOf<Cart>()
+
     var expanded by  mutableStateOf(false)
         private set
 
@@ -44,6 +47,9 @@ class CartViewModel @Inject constructor(
             when(result) {
                 is Resource.Success -> {
                     _state.value = CartListState(cartList = result.data ?: emptyList())
+                    if (_state.value.cartList.isNotEmpty()) {
+                        cartList = _state.value.cartList as MutableList<Cart>
+                    }
                 }
                 is Resource.Error -> {
                     _state.value = CartListState(error = result.message ?: "An unexpected error occurred")
