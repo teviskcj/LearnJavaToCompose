@@ -19,8 +19,8 @@ import javax.inject.Inject
 class OrdersViewModel @Inject constructor(
     private val getOrdersUseCase: GetOrdersUseCase
 ) : ViewModel()  {
-    private val _state = mutableStateOf(OrdersState())
-    val state: State<OrdersState> = _state
+    private val _state = mutableStateOf(OrderDetailState())
+    val state: State<OrderDetailState> = _state
 
     var orderList = mutableListOf<OrderView>()
 
@@ -32,7 +32,7 @@ class OrdersViewModel @Inject constructor(
         getOrdersUseCase(userId).onEach { result ->
             when(result) {
                 is Resource.Success -> {
-                    _state.value = OrdersState(orderView = result.data ?: emptyList())
+                    _state.value = OrderDetailState(orderView = result.data ?: emptyList())
                     if (_state.value.orderView.isNotEmpty()) {
                         _state.value.orderView.forEach {
                             if (it.state != "D" && it.state != "R") {
@@ -43,10 +43,10 @@ class OrdersViewModel @Inject constructor(
                     }
                 }
                 is Resource.Error -> {
-                    _state.value = OrdersState(error = result.message ?: "An unexpected error occurred")
+                    _state.value = OrderDetailState(error = result.message ?: "An unexpected error occurred")
                 }
                 is Resource.Loading -> {
-                    _state.value = OrdersState(isLoading = true)
+                    _state.value = OrderDetailState(isLoading = true)
                 }
             }
         }.launchIn(viewModelScope)

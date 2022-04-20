@@ -25,6 +25,7 @@ import com.example.composesfo.R
 import com.example.composesfo.common.CurrentUserState
 import com.example.composesfo.data.remote.dto.QuestionDto
 import com.example.composesfo.data.remote.dto.UserDto
+import com.example.composesfo.domain.model.Question
 import com.example.composesfo.presentation.component.ExposedDropMenuStateHolder
 import com.example.composesfo.presentation.component.TextFieldWithIcon
 import com.example.composesfo.presentation.component.TopBarTitle
@@ -39,6 +40,8 @@ fun EditProfileScreen(
 ) {
     val state = viewModel.state.value
     val userProfile = state.userProfile
+    val stateQuestion = viewModel.stateQuestion.value
+    val question = stateQuestion.question
     val stateHolder = rememberExposedMenuStateHolder()
     val stateHolderTwo = rememberExposedMenuStateHolder()
 
@@ -72,7 +75,7 @@ fun EditProfileScreen(
             answerTwo = viewModel.answerTwo,
             onAnswerOneChange = viewModel::onAnswerOneChange,
             onAnswerTwoChange = viewModel::onAnswerTwoChange,
-            onShowQuestionFieldChange = viewModel::onShowNameFieldChange,
+            onShowQuestionFieldChange = viewModel::onShowQuestionFieldChange,
             stateHolder = stateHolder,
             stateHolderTwo = stateHolderTwo,
             createQuestion = viewModel::createQuestion
@@ -105,9 +108,14 @@ fun EditProfileScreen(
                 }
 
                 Spacer(modifier = Modifier.padding(20.dp))
-                QuestionsCard(
-                    onShowQuestionFieldChange = viewModel::onShowQuestionFieldChange
-                )
+                question?.let {
+                    QuestionsCard(
+                        onShowQuestionFieldChange = viewModel::onShowQuestionFieldChange,
+                        questionOne = stateHolder.value,
+                        questionTwo = stateHolderTwo.value,
+                        question = it
+                    )
+                }
             }
         }
     }
@@ -199,7 +207,10 @@ fun PasswordCard(
 
 @Composable
 fun QuestionsCard(
-    onShowQuestionFieldChange: (Boolean) -> Unit
+    onShowQuestionFieldChange: (Boolean) -> Unit,
+    questionOne: String,
+    questionTwo: String,
+    question: Question
 ) {
     Card(modifier = Modifier
         .fillMaxWidth()
@@ -226,16 +237,26 @@ fun QuestionsCard(
                 )
 
             }
-
+            Spacer(modifier = Modifier.padding(10.dp))
 
             Text(
-                text = "Question 1",
-                fontSize = 20.sp,
-                fontWeight = FontWeight.Bold
+                text = questionOne,
+                fontSize = 20.sp
             )
 
             Text(
-                text = "Question 2",
+                text = question.answer1,
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold
+            )
+            Spacer(modifier = Modifier.padding(10.dp))
+            Text(
+                text = questionTwo,
+                fontSize = 20.sp
+            )
+
+            Text(
+                text = question.answer2,
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold
             )
@@ -502,6 +523,7 @@ fun SetQuestionField(
                     )
 
                     createQuestion(CurrentUserState.userId, questionDto)
+                    onShowQuestionFieldChange(false)
                 },
                 colors = ButtonDefaults.buttonColors(backgroundColor = AllButton),
                 modifier = Modifier

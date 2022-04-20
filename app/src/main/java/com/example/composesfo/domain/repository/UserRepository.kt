@@ -12,4 +12,6 @@ interface UserRepository {
     suspend fun getUserById(userId: String): UserDto
 
     suspend fun createQuestion(userId: String, questionDto: QuestionDto)
+
+    suspend fun getQuestionById(userId: String): QuestionDto
 }

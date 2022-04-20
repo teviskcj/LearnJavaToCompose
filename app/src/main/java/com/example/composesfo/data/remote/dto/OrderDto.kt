@@ -1,6 +1,7 @@
 package com.example.composesfo.data.remote.dto
 
 import com.example.composesfo.domain.model.Order
+import com.example.composesfo.domain.model.OrderDetail
 import com.example.composesfo.domain.model.OrderView
 
 data class OrderDto(
@@ -40,5 +41,19 @@ fun OrderDto.toOrderView(): OrderView {
         state = state,
         time = time,
         totalAmount = totalAmount
+    )
+}
+
+fun OrderDto.toOrderDetail(): OrderDetail {
+    return OrderDetail(
+        address = address,
+        city = city,
+        date = date,
+        name = name,
+        orderID = orderID,
+        phone = phone,
+        state = state,
+        time = time,
+        totalAmount = totalAmount,
     )
 }

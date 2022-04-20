@@ -14,8 +14,11 @@ interface SFOApi {
     @GET("/Users/{userId}.json")
     suspend fun getUserById(@Path("userId") userId: String): UserDto
 
-    @PUT("/Users/{userId}.Security Questions.json")
+    @PUT("/Users/{userId}/Security Questions.json")
     suspend fun createQuestion(@Path("userId") userId: String, @Body questionDto: QuestionDto)
+
+    @GET("/Users/{userId}/Security Questions.json")
+    suspend fun getQuestionById(@Path("userId") userId: String): QuestionDto
 
     @GET("/Foods/.json")
     suspend fun getFoods(): Map<String, FoodDto>
@@ -26,11 +29,17 @@ interface SFOApi {
     @PUT("/Cart List/User View/{userId}/Foods/{foodId}.json")
     suspend fun createCart(@Path("userId") userId: String, @Path("foodId") foodId: String, @Body cartDto: CartDto)
 
+    @PUT("/Cart List/Admin View/{userId}/{orderId}/{foodId}.json")
+    suspend fun createCartOrder(@Path("userId") userId: String, @Path("orderId") orderId: String, @Path("foodId") foodId: String, @Body cartDto: CartDto)
+
     @GET("/Cart List/User View/{userId}/Foods/{foodId}.json")
     suspend fun getFoodFromCart(@Path("userId") userId: String, @Path("foodId") foodId: String): CartDto
 
     @GET("/Cart List/User View/{userId}/Foods/.json")
     suspend fun getCartList(@Path("userId") userId: String): Map<String, CartDto>
+
+    @GET("/Cart List/Admin View/{userId}/{orderId}/.json")
+    suspend fun getCartListFromOrder(@Path("userId") userId: String, @Path("orderId") orderId: String): Map<String, CartDto>
 
     @PUT("/Orders/{userId}/{orderId}.json")
     suspend fun createOrder(@Path("userId") userId: String, @Path("orderId") orderId: String, @Body orderDto: OrderDto)
@@ -38,8 +47,8 @@ interface SFOApi {
     @GET("/Orders/{userId}/.json")
     suspend fun getOrders(@Path("userId") userId: String): Map<String, OrderDto>
 
-    @PUT("/Cart List/Admin View/{userId}/{orderId}/{foodId}.json")
-    suspend fun createCartOrder(@Path("userId") userId: String, @Path("orderId") orderId: String, @Path("foodId") foodId: String, @Body cartDto: CartDto)
+    @GET("/Orders/{userId}/{orderId}.json")
+    suspend fun getOrderById(@Path("userId") userId: String, @Path("orderId") orderId: String): OrderDto
 
     @DELETE("/Cart List/User View/{userId}.json")
     suspend fun deleteCartList(@Path("userId") userId: String)

@@ -20,6 +20,13 @@ class CartRepositoryImpl @Inject constructor(
         return api.getCartList(userId)
     }
 
+    override suspend fun getCartListFromOrder(
+        userId: String,
+        orderId: String
+    ): Map<String, CartDto> {
+        return api.getCartListFromOrder(userId, orderId)
+    }
+
     override suspend fun createCartOrder(userId: String, orderId: String, foodId: String, cartDto: CartDto) {
         return api.createCartOrder(userId, orderId, foodId, cartDto)
     }

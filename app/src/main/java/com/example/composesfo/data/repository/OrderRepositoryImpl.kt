@@ -15,4 +15,8 @@ class OrderRepositoryImpl @Inject constructor(
     override suspend fun getOrders(userId: String): Map<String, OrderDto> {
         return api.getOrders(userId)
     }
+
+    override suspend fun getOrderById(userId: String, orderId: String): OrderDto {
+        return api.getOrderById(userId, orderId)
+    }
 }

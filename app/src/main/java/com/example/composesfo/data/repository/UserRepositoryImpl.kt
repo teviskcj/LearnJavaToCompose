@@ -24,4 +24,8 @@ class UserRepositoryImpl @Inject constructor(
     override suspend fun createQuestion(userId: String, questionDto: QuestionDto) {
         return api.createQuestion(userId, questionDto)
     }
+
+    override suspend fun getQuestionById(userId: String): QuestionDto{
+        return api.getQuestionById(userId)
+    }
 }

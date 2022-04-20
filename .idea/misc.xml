@@ -57,6 +57,9 @@
         <entry key="../../../../layout/compose-model-1650340081628.xml" value="0.32010135135135137" />
         <entry key="../../../../layout/compose-model-1650356639601.xml" value="0.32010135135135137" />
         <entry key="../../../../layout/compose-model-1650356658950.xml" value="0.32010135135135137" />
+        <entry key="../../../../layout/compose-model-1650428318727.xml" value="0.32010135135135137" />
+        <entry key="../../../../layout/compose-model-1650433420839.xml" value="0.32094594594594594" />
+        <entry key="../../../../layout/compose-model-1650435744172.xml" value="0.32094594594594594" />
         <entry key="..\:/AndroidComposeProject/LearnJavaToCompose/app/src/main/res/drawable/ic_profile.xml" value="0.124" />
         <entry key="..\:/AndroidComposeProject/LearnJavaToCompose/app/src/main/res/drawable/ic_qr_code.xml" value="0.252" />
         <entry key="app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.3605" />
@@ -66,14 +69,18 @@
         <entry key="app/src/main/res/drawable/ic_delete_cart.xml" value="0.3605" />
         <entry key="app/src/main/res/drawable/ic_delete_cart_item.xml" value="0.3605" />
         <entry key="app/src/main/res/drawable/ic_edit.xml" value="0.3605" />
+        <entry key="app/src/main/res/drawable/ic_language.xml" value="0.1915" />
         <entry key="app/src/main/res/drawable/ic_launcher_background.xml" value="0.3605" />
+        <entry key="app/src/main/res/drawable/ic_logout.xml" value="0.3605" />
         <entry key="app/src/main/res/drawable/ic_menu_book.xml" value="0.203" />
         <entry key="app/src/main/res/drawable/ic_more_vert.xml" value="0.3605" />
+        <entry key="app/src/main/res/drawable/ic_order.xml" value="0.1915" />
         <entry key="app/src/main/res/drawable/ic_password.xml" value="0.1915" />
         <entry key="app/src/main/res/drawable/ic_phone.xml" value="0.1915" />
         <entry key="app/src/main/res/drawable/ic_profile.xml" value="0.203" />
         <entry key="app/src/main/res/drawable/ic_settings.xml" value="0.3605" />
         <entry key="app/src/main/res/drawable/ic_shopping_cart.xml" value="0.203" />
+        <entry key="app/src/main/res/drawable/ic_translate.xml" value="0.1915" />
         <entry key="app/src/main/res/drawable/ic_visibility.xml" value="0.1915" />
         <entry key="app/src/main/res/drawable/ic_visibility_off_24.xml" value="0.1915" />
         <entry key="app/src/main/res/drawable/ic_voice.xml" value="0.3225" />

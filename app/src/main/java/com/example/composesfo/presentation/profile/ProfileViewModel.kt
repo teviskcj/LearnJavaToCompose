@@ -11,6 +11,7 @@ import com.example.composesfo.common.Resource
 import com.example.composesfo.data.remote.dto.QuestionDto
 import com.example.composesfo.data.remote.dto.UserDto
 import com.example.composesfo.domain.useCase.CreateQuestionUseCase
+import com.example.composesfo.domain.useCase.GetQuestionUseCase
 import com.example.composesfo.domain.useCase.GetUserUseCase
 import com.example.composesfo.domain.useCase.UserRegisterUseCase
 import com.example.composesfo.presentation.register.RegisterState
@@ -23,7 +24,8 @@ import javax.inject.Inject
 class ProfileViewModel @Inject constructor(
     private val getUserUseCase: GetUserUseCase,
     private val userRegisterUseCase: UserRegisterUseCase,
-    private val createQuestionUseCase: CreateQuestionUseCase
+    private val createQuestionUseCase: CreateQuestionUseCase,
+    private val getQuestionUseCase: GetQuestionUseCase
 ) : ViewModel() {
     private val _state = mutableStateOf(UserProfileState())
     val state: State<UserProfileState> = _state
@@ -60,6 +62,7 @@ class ProfileViewModel @Inject constructor(
 
     init {
         getUserProfile(CurrentUserState.userId)
+        getQuestion(CurrentUserState.userId)
     }
 
     private fun getUserProfile(userId: String) {
@@ -96,6 +99,22 @@ class ProfileViewModel @Inject constructor(
 
     fun createQuestion(userId: String, questionDto: QuestionDto) {
         createQuestionUseCase(userId, questionDto).onEach { result ->
+            when(result) {
+                is Resource.Success -> {
+                    _stateQuestion.value = QuestionState(question = result.data)
+                }
+                is Resource.Error -> {
+                    _stateQuestion.value = QuestionState(error = result.message ?: "An unexpected error occurred")
+                }
+                is Resource.Loading -> {
+                    _stateQuestion.value = QuestionState(isLoading = true)
+                }
+            }
+        }.launchIn(viewModelScope)
+    }
+
+    private fun getQuestion(userId: String) {
+        getQuestionUseCase(userId).onEach { result ->
             when(result) {
                 is Resource.Success -> {
                     _stateQuestion.value = QuestionState(question = result.data)

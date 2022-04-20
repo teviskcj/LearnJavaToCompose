@@ -9,8 +9,11 @@ import com.example.composesfo.presentation.foodDetails.FoodDetailsScreen
 import com.example.composesfo.presentation.foodMenu.MenuScreen
 import com.example.composesfo.presentation.language.LanguageScreen
 import com.example.composesfo.presentation.login.LoginScreen
+import com.example.composesfo.presentation.order.OrderScreen
+import com.example.composesfo.presentation.orderDetail.OrderDetailsScreen
 import com.example.composesfo.presentation.payment.PaymentScreen
 import com.example.composesfo.presentation.profile.EditProfileScreen
+import com.example.composesfo.presentation.profile.ProfileScreen
 import com.example.composesfo.presentation.register.RegisterScreen
 import com.example.composesfo.presentation.view.*
 import com.example.composesfo.presentation.wallet.ReloadFormScreen
@@ -18,7 +21,6 @@ import com.example.composesfo.presentation.wallet.WalletScreen
 
 @Composable
 fun Navigation() {
-    //lateinit var navController: NavHostController
     val navController = rememberNavController()
     NavHost(
         navController = navController,
@@ -60,7 +62,7 @@ fun Navigation() {
         composable(Screen.OrderScreen.route) {
             OrderScreen(navController = navController)
         }
-        composable(Screen.OrderDetailsScreen.route) {
+        composable(Screen.OrderDetailsScreen.route + "/{orderId}") {
             OrderDetailsScreen(navController = navController)
         }
         composable(Screen.LanguageScreen.route) {
@@ -68,9 +70,6 @@ fun Navigation() {
         }
         composable(Screen.TranslatorScreen.route) {
             TranslatorScreen(navController = navController)
-        }
-        composable(Screen.QuestionsScreen.route) {
-            QuestionsScreen(navController = navController)
         }
     }
 }
