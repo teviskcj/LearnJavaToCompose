@@ -13,9 +13,11 @@ data class FoodDto(
 
 fun FoodDto.toFood(): Food {
     return Food(
+        foodCategory = foodCategory,
         foodDescription = foodDescription,
         foodImage = foodImage,
         foodName = foodName,
-        foodPrice = foodPrice
+        foodPrice = foodPrice,
+        foodPopular = foodPopular
     )
 }

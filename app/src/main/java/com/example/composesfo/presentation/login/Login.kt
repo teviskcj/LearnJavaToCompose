@@ -99,7 +99,7 @@ fun LoginForm(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp)
+            .padding(30.dp, 20.dp)
     ) {
 
         // navigator
@@ -115,7 +115,7 @@ fun LoginForm(
                     .weight(1f)
             ) {
                 Text(
-                    text = "LOG IN",
+                    text = stringResource(R.string.log_in),
                     fontSize = 22.sp
                 )
             }
@@ -136,7 +136,7 @@ fun LoginForm(
                     .weight(1f)
             ) {
                 Text(
-                    text = "REGISTER",
+                    text = stringResource(R.string.sign_up),
                     fontSize = 22.sp
                 )
             }
@@ -195,20 +195,20 @@ fun LoginForm(
                 .fillMaxWidth()
         ) {
             Text(
-                text = "LOG IN",
+                text = stringResource(R.string.log_in),
                 fontSize = 22.sp
             )
         }
 
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceEvenly
+            horizontalArrangement = Arrangement.SpaceBetween
         ) {
             TextButton(
                 onClick = { /*TODO*/ }
             ) {
                 Text(
-                    text = "Login As User",
+                    text = stringResource(R.string.login_as_user),
                     fontSize = 18.sp,
                     textDecoration = TextDecoration.Underline,
                     color = Color.Black,
@@ -220,7 +220,7 @@ fun LoginForm(
                 onClick = { /*TODO*/ }
             ) {
                 Text(
-                    text = "Login As Admin",
+                    text = stringResource(R.string.login_as_admin),
                     fontSize = 18.sp,
                     textDecoration = TextDecoration.Underline,
                     color = Color.Black,

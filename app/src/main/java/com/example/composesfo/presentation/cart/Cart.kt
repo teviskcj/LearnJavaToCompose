@@ -14,6 +14,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontStyle
@@ -132,7 +133,7 @@ fun TopBarWithDeleteCart(
         ) {
             Icon(
                 painter = painter,
-                contentDescription = "Delete Cart Item",
+                contentDescription = stringResource(R.string.delete_all_cart),
                 tint = AllButton
             )
         }
@@ -236,7 +237,7 @@ fun CartListItem(
         ) {
             Icon(
                 painter = painterResource(id = R.drawable.ic_edit),
-                contentDescription = "Edit Cart Item",
+                contentDescription = stringResource(R.string.edit_cart_item),
                 tint = AllButton
             )
         }
@@ -248,7 +249,7 @@ fun CartListItem(
         ) {
             Icon(
                 painter = painterResource(id = R.drawable.ic_delete_cart_item),
-                contentDescription = "Delete Cart Item",
+                contentDescription = stringResource(R.string.delete_cart_item),
                 tint = AllButton
             )
         }
@@ -271,7 +272,7 @@ fun ButtonWithTotalItems(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = "$totalItem Items",
+                text = "$totalItem " + stringResource(R.string.items),
                 fontSize = 14.sp,
                 color = lightGrey
             )
@@ -300,7 +301,7 @@ fun ButtonWithTotalItems(
             shape = RoundedCornerShape(14.dp)
         ) {
             Text(
-                text = "Place Order",
+                text = stringResource(R.string.place_order),
                 color = white,
                 style = MaterialTheme.typography.button,
                 modifier = Modifier.padding(top = 8.dp, bottom = 8.dp)
@@ -324,7 +325,7 @@ fun ConfirmDialog(
         ) {
             Column(modifier = Modifier.padding(16.dp)) {
                 // TITLE
-                Text(text = "Delete Shopping Cart", style = MaterialTheme.typography.subtitle1)
+                Text(text = stringResource(R.string.delete_shopping_cart), style = MaterialTheme.typography.subtitle1)
 
                 Column(
                     modifier = Modifier
@@ -333,7 +334,7 @@ fun ConfirmDialog(
                         .padding(vertical = 16.dp)
                 ) {
                     Text(
-                        text = "Are you sure to delete all cart items?",
+                        text = stringResource(R.string.are_you_sure_to_delete_all_cart_items),
                         style = MaterialTheme.typography.body2
                     )
                 }
@@ -341,10 +342,10 @@ fun ConfirmDialog(
                 // BUTTONS
                 Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
                     TextButton(onClick = onDismiss) {
-                        Text(text = "Cancel")
+                        Text(text = stringResource(R.string.cancel))
                     }
                     TextButton(onClick = { onConfirmClicked(CurrentUserState.userId) }) {
-                        Text(text = "OK")
+                        Text(text = stringResource(R.string.ok))
                     }
                 }
             }

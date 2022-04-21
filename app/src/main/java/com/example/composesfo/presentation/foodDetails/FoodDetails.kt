@@ -14,6 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -23,6 +24,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import coil.compose.rememberImagePainter
+import com.example.composesfo.R
 import com.example.composesfo.common.CurrentUserState
 import com.example.composesfo.data.remote.dto.CartDto
 import com.example.composesfo.domain.model.Food
@@ -93,7 +95,7 @@ fun FoodDetailsScreen(
                     .height(60.dp)
             ) {
                 Text(
-                    text = "Add To Cart",
+                    text = stringResource(R.string.add_to_cart),
                     fontSize = 22.sp
                 )
             }
@@ -118,7 +120,7 @@ fun DisplayFoodDetail(food: Food) {
         )
         Image(
             painter = painter,
-            contentDescription = "Food Image",
+            contentDescription = stringResource(R.string.food_image),
             contentScale = ContentScale.Crop,
             modifier = Modifier
                 .padding(top = 10.dp, bottom = 30.dp)

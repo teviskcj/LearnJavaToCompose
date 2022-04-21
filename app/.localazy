@@ -1,0 +1,7 @@
+[packages]
+com.example.composesfo = raa
+
+[localazy]
+allStringsUploaded = true
+showWelcomeMessage = false
+

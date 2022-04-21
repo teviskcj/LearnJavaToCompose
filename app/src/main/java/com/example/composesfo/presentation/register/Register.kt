@@ -119,7 +119,7 @@ fun RegisterForm(
                     .weight(1f)
             ) {
                 Text(
-                    text = "LOG IN",
+                    text = stringResource(R.string.log_in),
                     fontSize = 22.sp
                 )
 
@@ -138,7 +138,7 @@ fun RegisterForm(
                     .weight(1f)
             ) {
                 Text(
-                    text = "SIGN UP",
+                    text = stringResource(R.string.sign_up),
                     fontSize = 22.sp
                 )
 
@@ -211,7 +211,7 @@ fun RegisterForm(
                 .fillMaxWidth()
         ) {
             Text(
-                text = "REGISTER NOW",
+                text = stringResource(R.string.register_now),
                 fontSize = 22.sp
             )
 

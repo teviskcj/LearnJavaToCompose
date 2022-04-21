@@ -6,6 +6,5 @@ class CurrentUserState {
         var currentAmount = 0
         var reloadAmount = 0
         var totalAmount = 0
-        var language = "English"
     }
 }

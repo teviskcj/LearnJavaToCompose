@@ -91,7 +91,7 @@ fun ReloadFormScreen(
                     shape = RoundedCornerShape(14.dp)
                 ) {
                     Text(
-                        text = "Confirm Reload",
+                        text = stringResource(R.string.confirm_reload),
                         color = white,
                         style = MaterialTheme.typography.button,
                         modifier = Modifier.padding(top = 8.dp, bottom = 8.dp)

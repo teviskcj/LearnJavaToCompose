@@ -140,7 +140,7 @@ fun PaymentScreen(
                     shape = RoundedCornerShape(14.dp)
                 ) {
                     Text(
-                        text = "PROCEED TO PAYMENT",
+                        text = stringResource(R.string.proceed_to_payment),
                         color = white,
                         style = MaterialTheme.typography.button,
                         modifier = Modifier.padding(top = 8.dp, bottom = 8.dp)
@@ -191,7 +191,7 @@ fun OrderForm(
         TextFieldWithIcon(
             text = city,
             onTextChange = onCityChange,
-            label = "Your city",
+            label = stringResource(R.string.your_city),
             keyboardOptions = KeyboardOptions(
                 imeAction = ImeAction.Done
             )

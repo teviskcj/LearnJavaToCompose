@@ -4,6 +4,8 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.composesfo.presentation.HomeScreen
+import com.example.composesfo.presentation.TranslatorScreen
 import com.example.composesfo.presentation.cart.CartScreen
 import com.example.composesfo.presentation.foodDetails.FoodDetailsScreen
 import com.example.composesfo.presentation.foodMenu.MenuScreen
@@ -15,7 +17,6 @@ import com.example.composesfo.presentation.payment.PaymentScreen
 import com.example.composesfo.presentation.profile.EditProfileScreen
 import com.example.composesfo.presentation.profile.ProfileScreen
 import com.example.composesfo.presentation.register.RegisterScreen
-import com.example.composesfo.presentation.view.*
 import com.example.composesfo.presentation.wallet.ReloadFormScreen
 import com.example.composesfo.presentation.wallet.WalletScreen
 

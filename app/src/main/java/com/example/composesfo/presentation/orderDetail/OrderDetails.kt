@@ -9,6 +9,7 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
@@ -19,6 +20,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.example.composesfo.R
 import com.example.composesfo.domain.model.Cart
 import com.example.composesfo.domain.model.OrderDetail
 import com.example.composesfo.presentation.component.TopBarTitle
@@ -32,7 +34,6 @@ fun OrderDetailsScreen(
 ) {
     val state = viewModel.state.value
     val stateCart = viewModel.stateCart.value
-    val orderDetail = OrderDetail("","","","","","","","","")
     Box(modifier = Modifier
         .fillMaxSize()) {
         Column {
@@ -134,7 +135,7 @@ fun OrderDetailsCard(
             modifier = Modifier.padding(10.dp)
         ) {
             Text(
-                text = "Order Details",
+                text = stringResource(R.string.order_details),
                 fontSize = 20.sp
             )
 
@@ -146,7 +147,7 @@ fun OrderDetailsCard(
                             fontSize = 18.sp
                         )
                     ) {
-                        append("Order No : ")
+                        append(stringResource(R.string.order_no) + " : ")
                     }
                     withStyle(
                         style = SpanStyle(
@@ -168,7 +169,7 @@ fun OrderDetailsCard(
                             fontSize = 18.sp
                         )
                     ) {
-                        append("Time : ")
+                        append(stringResource(R.string.time) + " : ")
                     }
                     withStyle(
                         style = SpanStyle(
@@ -198,7 +199,7 @@ fun CustomerInfoCard(
             modifier = Modifier.padding(10.dp)
         ) {
             Text(
-                text = "Customer Info",
+                text = stringResource(R.string.customer_info),
                 fontSize = 20.sp
             )
 
@@ -210,7 +211,7 @@ fun CustomerInfoCard(
                             fontSize = 18.sp
                         )
                     ) {
-                        append("Name : ")
+                        append(stringResource(R.string.name) + " : ")
                     }
                     withStyle(
                         style = SpanStyle(
@@ -232,7 +233,7 @@ fun CustomerInfoCard(
                             fontSize = 18.sp
                         )
                     ) {
-                        append("Phone : ")
+                        append(stringResource(R.string.phone_number) + " : ")
                     }
                     withStyle(
                         style = SpanStyle(
@@ -254,7 +255,7 @@ fun CustomerInfoCard(
                             fontSize = 18.sp
                         )
                     ) {
-                        append("Address : ")
+                        append(stringResource(R.string.address) + " : ")
                     }
                     withStyle(
                         style = SpanStyle(
@@ -276,7 +277,7 @@ fun CustomerInfoCard(
                             fontSize = 18.sp
                         )
                     ) {
-                        append("City : ")
+                        append(stringResource(R.string.city) + " : ")
                     }
                     withStyle(
                         style = SpanStyle(
@@ -307,7 +308,7 @@ fun FoodsDetailsCard(
             modifier = Modifier.padding(10.dp)
         ) {
             Text(
-                text = "Food Details",
+                text = stringResource(R.string.food_details),
                 fontSize = 20.sp
             )
 
@@ -328,7 +329,7 @@ fun FoodsDetailsCard(
                     .fillMaxWidth()
             ) {
                 Text(
-                    text = "Total Amount",
+                    text = stringResource(R.string.total_amount),
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold
                 )

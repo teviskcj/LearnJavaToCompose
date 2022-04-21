@@ -3,19 +3,17 @@ package com.example.composesfo.presentation.foodMenu
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.CircularProgressIndicator
-import androidx.compose.material.Divider
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -26,6 +24,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import coil.compose.rememberImagePainter
+import com.example.composesfo.R
 import com.example.composesfo.domain.model.Food
 import com.example.composesfo.presentation.component.noRippleClickable
 import com.example.composesfo.presentation.navigation.Screen
@@ -36,7 +35,7 @@ fun MenuScreen(
     viewModel: FoodListViewModel = hiltViewModel()
 ) {
     val state = viewModel.state.value
-    val foodTypeList = foodType()
+    val foodTypeList = viewModel.stateList
 
     Box(modifier = Modifier
         .fillMaxSize()) {
@@ -50,10 +49,16 @@ fun MenuScreen(
                 onTypeChange = viewModel::onTypeChange
             )
             Spacer(modifier = Modifier.padding(20.dp))
-            FoodList(
+            FoodListByType(
+                types = foodTypeList,
+                foods = state.foods,
+                navController = navController,
+                getFoodListByType = viewModel::getFoodListByType
+            )
+            /*FoodList(
                 foods = state.foods,
                 navController = navController
-            )
+            )*/
 
             IsStateError(state.error)
             IsStateLoading(state.isLoading)
@@ -97,8 +102,8 @@ fun TypeList(
         list.forEach { text ->
             Column(
                 modifier = Modifier
-                .padding(0.dp, 4.dp, 12.dp, 4.dp)
-                .width(IntrinsicSize.Max)
+                    .padding(0.dp, 4.dp, 12.dp, 4.dp)
+                    .width(IntrinsicSize.Max)
             ) {
                 Text(
                     text = text,
@@ -125,13 +130,52 @@ fun TypeList(
     }
 }
 
+@Composable
+fun FoodListByType(
+    types: List<String>,
+    foods: List<Food>,
+    navController: NavController,
+    getFoodListByType: (String, List<Food>) -> List<Food>
+) {
+    Column(
+        modifier = Modifier
+        .verticalScroll(rememberScrollState())
+    ) {
+        types.forEach {
+            val list = getFoodListByType(it, foods)
+            FoodList(
+                foods = list,
+                navController = navController,
+                type = it
+            )
+        }
+    }
+}
 
 @Composable
 fun FoodList(
     foods: List<Food>,
-    navController: NavController
+    navController: NavController,
+    type: String
 ) {
-    LazyColumn {
+
+    Card(modifier = Modifier.fillMaxWidth()) {
+        Column {
+            Text(
+                text = type,
+                fontSize = 20.sp
+            )
+            foods.forEach { food ->
+                FoodListItem(
+                    food = food,
+                    onItemClick = {
+                        navController.navigate(route = Screen.FoodDetailsScreen.route + "/${it.foodName}")
+                    }
+                )
+            }
+        }
+    }
+    /*LazyColumn {
         items(foods) { food ->
             FoodListItem(
                 food = food,
@@ -141,7 +185,8 @@ fun FoodList(
             )
         }
 
-    }
+    }*/
+    Spacer(modifier = Modifier.padding(10.dp))
 }
 
 @Composable
@@ -161,7 +206,8 @@ fun FoodListItem(
                 text = food.foodName,
                 textAlign = TextAlign.Center,
                 fontSize = 24.sp,
-                fontWeight = FontWeight.Bold
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.padding(top = 10.dp)
             )
 
             val painter = rememberImagePainter(
@@ -173,7 +219,7 @@ fun FoodListItem(
             )
             Image(
                 painter = painter,
-                contentDescription = "Food Image",
+                contentDescription = stringResource(R.string.food_image),
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .height(200.dp)
@@ -197,7 +243,7 @@ fun FoodListItem(
 
             Divider(
                 color = Color.LightGray,
-                modifier = Modifier.padding(top = 10.dp, bottom = 10.dp)
+                modifier = Modifier.padding(top = 10.dp)
             )
         }
     }

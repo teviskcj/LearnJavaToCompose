@@ -1,4 +1,4 @@
-package com.example.composesfo.presentation.view
+package com.example.composesfo.presentation
 
 import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.layout.height
@@ -11,6 +11,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -74,7 +75,7 @@ private fun BottomBar(
                     Icon(
                         painter = painterResource(id = iconRes),
                         modifier = Modifier.size(24.dp),
-                        contentDescription = "Bottom nav icons"
+                        contentDescription = stringResource(R.string.bottom_nav_icons)
                     )
                 },
                 selected = selected,

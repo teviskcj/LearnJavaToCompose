@@ -11,6 +11,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -38,7 +39,7 @@ fun ProfileScreen(
             ) {
                 ActionCard(
                     painter = painterResource(id = R.drawable.ic_profile),
-                    text = "Profile",
+                    text = stringResource(R.string.profile),
                     onCardClick = {
                         navController.navigate(route = Screen.EditProfileScreen.route)
                     }
@@ -46,7 +47,7 @@ fun ProfileScreen(
 
                 ActionCard(
                     painter = painterResource(id = R.drawable.ic_order),
-                    text = "Order",
+                    text = stringResource(R.string.order),
                     onCardClick = {
                         navController.navigate(route = Screen.OrderScreen.route)
                     }
@@ -59,7 +60,7 @@ fun ProfileScreen(
             ) {
                 ActionCard(
                     painter = painterResource(id = R.drawable.ic_language),
-                    text = "Language",
+                    text = stringResource(R.string.language),
                     onCardClick = {
                         navController.navigate(route = Screen.LanguageScreen.route)
                     }
@@ -67,7 +68,7 @@ fun ProfileScreen(
 
                 ActionCard(
                     painter = painterResource(id = R.drawable.ic_translate),
-                    text = "Translator",
+                    text = stringResource(R.string.translator),
                     onCardClick = {
                         navController.navigate(route = Screen.TranslatorScreen.route)
                     }
@@ -80,7 +81,7 @@ fun ProfileScreen(
             ) {
                 ActionCard(
                     painter = painterResource(id = R.drawable.ic_logout),
-                    text = "Logout",
+                    text = stringResource(R.string.logout),
                     onCardClick = {
                         navController.navigate(Screen.LoginScreen.route) {
                             navController.backQueue.clear()

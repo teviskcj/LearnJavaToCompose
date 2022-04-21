@@ -141,14 +141,14 @@ fun NameCard(
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
-                    text = "Name",
+                    text = stringResource(R.string.name),
                     fontSize = 20.sp,
                 )
 
 
                 Icon(
                     painter = painterResource(id = R.drawable.ic_edit),
-                    contentDescription = "Edit Name",
+                    contentDescription = stringResource(R.string.edit_name),
                     tint = AllButton
                 )
 
@@ -182,14 +182,14 @@ fun PasswordCard(
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
-                    text = "Password",
+                    text = stringResource(R.string.password),
                     fontSize = 20.sp,
                 )
 
 
                 Icon(
                     painter = painterResource(id = R.drawable.ic_edit),
-                    contentDescription = "Edit Password",
+                    contentDescription = stringResource(R.string.edit_password),
                     tint = AllButton
                 )
 
@@ -225,14 +225,14 @@ fun QuestionsCard(
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
-                    text = "Security Questions",
+                    text = stringResource(R.string.security_questions),
                     fontSize = 20.sp,
                 )
 
 
                 Icon(
                     painter = painterResource(id = R.drawable.ic_edit),
-                    contentDescription = "Set Security Questions",
+                    contentDescription = stringResource(R.string.set_security_questions),
                     tint = AllButton
                 )
 
@@ -280,7 +280,7 @@ fun EditNameField(
             modifier = Modifier.padding(16.dp)
         ) {
             Text(
-                text = "This is how we'll address you",
+                text = stringResource(R.string.this_is_how_we_address_you),
                 fontSize = 20.sp,
             )
 
@@ -310,7 +310,7 @@ fun EditNameField(
                 shape = RoundedCornerShape(14.dp)
             ) {
                 Text(
-                    text = "Cancel",
+                    text = stringResource(R.string.cancel),
                     color = white,
                     style = MaterialTheme.typography.button,
                     modifier = Modifier.padding(top = 8.dp, bottom = 8.dp)
@@ -339,7 +339,7 @@ fun EditNameField(
                 shape = RoundedCornerShape(14.dp)
             ) {
                 Text(
-                    text = "Save",
+                    text = stringResource(R.string.save),
                     color = white,
                     style = MaterialTheme.typography.button,
                     modifier = Modifier.padding(top = 8.dp, bottom = 8.dp)
@@ -367,20 +367,20 @@ fun EditPasswordField(
             modifier = Modifier.padding(16.dp)
         ) {
             Text(
-                text = "This is how we'll help you to reset password",
+                text = stringResource(R.string.this_is_how_we_help_you_to_reset_password),
                 fontSize = 20.sp,
             )
 
             TextFieldWithIcon(
                 text = password,
                 onTextChange = onPasswordChange,
-                label = "New Password"
+                label = stringResource(R.string.new_password)
             )
 
             TextFieldWithIcon(
                 text = confirmPassword,
                 onTextChange = onConfirmPasswordChange,
-                label = "Confirm Password",
+                label = stringResource(R.string.confirm_password),
                 keyboardOptions = KeyboardOptions(
                     imeAction = ImeAction.Done
                 )
@@ -403,7 +403,7 @@ fun EditPasswordField(
                 shape = RoundedCornerShape(14.dp)
             ) {
                 Text(
-                    text = "Cancel",
+                    text = stringResource(R.string.cancel),
                     color = white,
                     style = MaterialTheme.typography.button,
                     modifier = Modifier.padding(top = 8.dp, bottom = 8.dp)
@@ -432,7 +432,7 @@ fun EditPasswordField(
                 shape = RoundedCornerShape(14.dp)
             ) {
                 Text(
-                    text = "Reset",
+                    text = stringResource(R.string.reset),
                     color = white,
                     style = MaterialTheme.typography.button,
                     modifier = Modifier.padding(top = 8.dp, bottom = 8.dp)
@@ -463,12 +463,12 @@ fun SetQuestionField(
             modifier = Modifier.padding(16.dp),
         ) {
             Text(
-                text = "This is how we'll enhance your account security",
+                text = stringResource(R.string.this_is_how_we_enhance_your_account_security),
                 fontSize = 20.sp,
             )
 
             Text(
-                text = "You can set up to two questions",
+                text = stringResource(R.string.you_can_set_up_to_two_questions),
                 fontSize = 20.sp,
             )
 
@@ -477,7 +477,7 @@ fun SetQuestionField(
             TextFieldWithIcon(
                 text = answerOne,
                 onTextChange = onAnswerOneChange,
-                label = "Answer 1"
+                label = stringResource(R.string.answer_1)
             )
 
             ExposedDropdownMenu(stateHolder = stateHolderTwo)
@@ -485,7 +485,7 @@ fun SetQuestionField(
             TextFieldWithIcon(
                 text = answerTwo,
                 onTextChange = onAnswerTwoChange,
-                label = "Answer 2",
+                label = stringResource(R.string.answer_2),
                 keyboardOptions = KeyboardOptions(
                     imeAction = ImeAction.Done
                 )
@@ -508,7 +508,7 @@ fun SetQuestionField(
                 shape = RoundedCornerShape(14.dp)
             ) {
                 Text(
-                    text = "Cancel",
+                    text = stringResource(R.string.cancel),
                     color = white,
                     style = MaterialTheme.typography.button,
                     modifier = Modifier.padding(top = 8.dp, bottom = 8.dp)
@@ -536,7 +536,7 @@ fun SetQuestionField(
                 shape = RoundedCornerShape(14.dp)
             ) {
                 Text(
-                    text = "Set Questions",
+                    text = stringResource(R.string.set_questions),
                     color = white,
                     style = MaterialTheme.typography.button,
                     modifier = Modifier.padding(top = 8.dp, bottom = 8.dp)
@@ -558,7 +558,6 @@ fun ExposedDropdownMenu(stateHolder: ExposedDropMenuStateHolder) {
                 value = stateHolder.value,
                 onValueChange = {},
                 readOnly = true,
-                label = { Text(text = "Question 1") },
                 trailingIcon = {
                     Icon(
                         painter = painterResource(id = stateHolder.icon),

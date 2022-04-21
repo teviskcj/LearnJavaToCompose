@@ -10,6 +10,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -55,7 +56,7 @@ fun ShowBalance(wallet: Wallet) {
         verticalArrangement = Arrangement.spacedBy(30.dp)
     ) {
         Text(
-            text = "Balance",
+            text = stringResource(R.string.balance),
             fontWeight = FontWeight.Bold,
             fontSize = 30.sp
         )
@@ -86,32 +87,29 @@ fun ShowReloadMethod(navController: NavController) {
             verticalAlignment = Alignment.Bottom
         ) {
             Text(
-                text = "Select Reload Amount",
+                text = stringResource(R.string.select_reload_amount),
                 fontWeight = FontWeight.Bold,
-                fontSize = 22.sp,
-                modifier = Modifier.layoutId("reloadText")
+                fontSize = 22.sp
             )
 
             Spacer(modifier = Modifier.weight(1f))
 
             IconButton(
-                    onClick = { /*TODO*/ },
-            modifier = Modifier.layoutId("qrImage")
+                    onClick = { /*TODO*/ }
             ) {
             Icon(
                 painter = painterResource(id = R.drawable.ic_qr_code),
-                contentDescription = "QR Code",
+                contentDescription = stringResource(R.string.qr_code),
                 modifier = Modifier.size(48.dp)
             )
         }
 
             IconButton(
-                onClick = { /*TODO*/ },
-                modifier = Modifier.layoutId("qrScannerImage")
+                onClick = { /*TODO*/ }
             ) {
                 Icon(
                     painter = painterResource(id = R.drawable.ic_qr_code_scanner),
-                    contentDescription = "QR Scanner",
+                    contentDescription = stringResource(R.string.qr_scanner),
                     modifier = Modifier.size(48.dp)
                 )
             }

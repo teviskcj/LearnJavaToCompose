@@ -90,3 +90,16 @@ dependencies {
     //Preferences DataStore
     implementation "androidx.datastore:datastore-preferences:1.0.0"
 }
+
+// Make sure to always add this after android { ... } section
+apply plugin: 'com.localazy.gradle'
+apply plugin: 'com.localazy.gradle.data'
+
+localazy {
+    readKey "a8248916508289175434-95ed1680af8e7d9c6b2c78c697138baf902cb776d5a4be4465d37c40123dda48"
+    writeKey "a8248916508289175434-6fa87f226676fff46d3166c76658d4d70a0b0e9d442325807c734517cf39454a"
+
+    injection {
+        installRepositories false
+    }
+}
