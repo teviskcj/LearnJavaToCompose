@@ -5,7 +5,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.composesfo.presentation.HomeScreen
-import com.example.composesfo.presentation.TranslatorScreen
+import com.example.composesfo.presentation.translator.TranslatorScreen
 import com.example.composesfo.presentation.cart.CartScreen
 import com.example.composesfo.presentation.foodDetails.FoodDetailsScreen
 import com.example.composesfo.presentation.foodMenu.MenuScreen

@@ -1,18 +1,17 @@
 package com.example.composesfo.presentation.foodMenu
 
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.*
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -28,6 +27,9 @@ import com.example.composesfo.R
 import com.example.composesfo.domain.model.Food
 import com.example.composesfo.presentation.component.noRippleClickable
 import com.example.composesfo.presentation.navigation.Screen
+import com.example.composesfo.presentation.ui.theme.AllButton
+import com.example.composesfo.presentation.ui.theme.frameColor
+import kotlinx.coroutines.CoroutineScope
 
 @Composable
 fun MenuScreen(
@@ -36,29 +38,41 @@ fun MenuScreen(
 ) {
     val state = viewModel.state.value
     val foodTypeList = viewModel.stateList
+    val scrollState = rememberScrollState()
+    val coroutineScope = rememberCoroutineScope()
+
+    if (scrollState.isScrollInProgress) {
+        viewModel.changeTypeByScrollPosition(
+            currentValue = scrollState.value,
+            maxValue = scrollState.maxValue
+        )
+    }
 
     Box(modifier = Modifier
-        .fillMaxSize()) {
-        Column(modifier = Modifier.padding(16.dp)) {
+        .fillMaxSize()
+        .background(frameColor)
+    ) {
+        Column {
 
             TopAppBarHeader()
             Spacer(modifier = Modifier.padding(10.dp))
             TypeList(
                 list = foodTypeList,
                 getColor = viewModel::getColor,
-                onTypeChange = viewModel::onTypeChange
+                onTypeChange = viewModel::onTypeChange,
+                scrollState = scrollState,
+                coroutineScope = coroutineScope,
+                scrollToType = viewModel::scrollToByType
             )
             Spacer(modifier = Modifier.padding(20.dp))
             FoodListByType(
                 types = foodTypeList,
                 foods = state.foods,
                 navController = navController,
-                getFoodListByType = viewModel::getFoodListByType
+                getFoodListByType = viewModel::getFoodListByType,
+                scrollState = scrollState,
+                checkType = viewModel::addTypePositionList
             )
-            /*FoodList(
-                foods = state.foods,
-                navController = navController
-            )*/
 
             IsStateError(state.error)
             IsStateLoading(state.isLoading)
@@ -68,7 +82,7 @@ fun MenuScreen(
 
 @Composable
 fun TopAppBarHeader() {
-    Column {
+    Column(modifier = Modifier.padding(16.dp)) {
         Text(
             text = "Our",
             fontStyle = FontStyle.Italic,
@@ -84,20 +98,20 @@ fun TopAppBarHeader() {
     }
 }
 
-private fun foodType(): List<String> {
-    return listOf("Popular", "Food", "Drink")
-}
-
 @Composable
 fun TypeList(
     list: List<String>,
     getColor: (String) -> Color,
-    onTypeChange: (String) -> Unit
+    onTypeChange: (String) -> Unit,
+    scrollState: ScrollState,
+    coroutineScope: CoroutineScope,
+    scrollToType: (CoroutineScope,ScrollState) -> Unit
 ) {
 
     Row(
         modifier = Modifier
-            .padding(0.dp, 8.dp),
+            .fillMaxWidth()
+            .padding(16.dp, 8.dp),
     ) {
         list.forEach { text ->
             Column(
@@ -111,6 +125,7 @@ fun TypeList(
                     modifier = Modifier
                         .noRippleClickable {
                             onTypeChange(text)
+                            scrollToType(coroutineScope,scrollState)
                         }
                 )
                 Box(
@@ -135,18 +150,22 @@ fun FoodListByType(
     types: List<String>,
     foods: List<Food>,
     navController: NavController,
-    getFoodListByType: (String, List<Food>) -> List<Food>
+    getFoodListByType: (String, List<Food>) -> List<Food>,
+    scrollState: ScrollState,
+    checkType: (String,Int) -> Unit
 ) {
     Column(
         modifier = Modifier
-        .verticalScroll(rememberScrollState())
+            .fillMaxWidth()
+            .verticalScroll(scrollState)
     ) {
         types.forEach {
             val list = getFoodListByType(it, foods)
             FoodList(
                 foods = list,
                 navController = navController,
-                type = it
+                type = it,
+                checkType = checkType
             )
         }
     }
@@ -156,15 +175,28 @@ fun FoodListByType(
 fun FoodList(
     foods: List<Food>,
     navController: NavController,
-    type: String
+    type: String,
+    checkType: (String,Int) -> Unit
 ) {
 
     Card(modifier = Modifier.fillMaxWidth()) {
         Column {
-            Text(
-                text = type,
-                fontSize = 20.sp
-            )
+            when (type) {
+                "Popular" -> PopularListHeader(
+                    type = type,
+                    description = "Most ordered right now."
+                )
+                "Food" -> FoodListHeader(
+                    type = type,
+                    description = "Chicken Chop, Spaghetti...",
+                    checkType = checkType
+                )
+                "Drink" -> FoodListHeader(
+                    type = type,
+                    description = "Soda Drink, Fruit Drink",
+                    checkType = checkType
+                )
+            }
             foods.forEach { food ->
                 FoodListItem(
                     food = food,
@@ -175,18 +207,70 @@ fun FoodList(
             }
         }
     }
-    /*LazyColumn {
-        items(foods) { food ->
-            FoodListItem(
-                food = food,
-                onItemClick = {
-                    navController.navigate(route = Screen.FoodDetailsScreen.route + "/${it.foodName}")
-                }
+    Spacer(modifier = Modifier.padding(10.dp))
+}
+
+@Composable
+fun PopularListHeader(
+    type: String,
+    description: String
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 10.dp, horizontal = 16.dp),
+        verticalArrangement = Arrangement.spacedBy(10.dp)
+    ) {
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(5.dp)
+        ) {
+            Icon(
+                painter = painterResource(id = R.drawable.ic_popular),
+                contentDescription = null,
+                tint = AllButton
+            )
+
+            Text(
+                text = type,
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold
             )
         }
 
-    }*/
-    Spacer(modifier = Modifier.padding(10.dp))
+        Text(
+            text = description,
+            fontSize = 15.sp
+        )
+    }
+}
+
+@Composable
+fun FoodListHeader(
+    type: String,
+    description: String,
+    checkType: (String,Int) -> Unit
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 10.dp, horizontal = 16.dp)
+            .onGloballyPositioned { layoutCoordinates ->
+                checkType(type,layoutCoordinates.positionInRoot().y.toInt())
+            },
+        verticalArrangement = Arrangement.spacedBy(10.dp)
+    ) {
+
+        Text(
+            text = type,
+            fontSize = 20.sp,
+            fontWeight = FontWeight.Bold
+        )
+
+        Text(
+            text = description,
+            fontSize = 15.sp
+        )
+    }
 }
 
 @Composable
@@ -223,7 +307,7 @@ fun FoodListItem(
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .height(200.dp)
-                    .padding(top = 10.dp, bottom = 10.dp)
+                    .padding(vertical = 10.dp, horizontal = 16.dp)
                     .padding(0.dp)
                     .fillMaxWidth()
             )
@@ -243,7 +327,11 @@ fun FoodListItem(
 
             Divider(
                 color = Color.LightGray,
-                modifier = Modifier.padding(top = 10.dp)
+                modifier = Modifier.padding(
+                    top = 10.dp,
+                    start = 16.dp,
+                    end = 16.dp
+                )
             )
         }
     }

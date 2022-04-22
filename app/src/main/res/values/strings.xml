@@ -73,4 +73,6 @@
     <string name="voice_button">Voice Button</string>
     <string name="bottom_nav_icons">Bottom nav icons</string>
     <string name="please_enter_word">Please enter word</string>
+    <string name="current_order">Current Order</string>
+    <string name="pass_order">Pass Order</string>
 </resources>

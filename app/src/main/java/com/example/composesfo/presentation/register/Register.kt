@@ -113,7 +113,13 @@ fun RegisterForm(
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Button(
-                onClick = { navController.navigate(route = Screen.LoginScreen.route) },
+                onClick = {
+                    navController.navigate(route = Screen.LoginScreen.route) {
+                        popUpTo(Screen.RegisterScreen.route) {
+                            inclusive = true
+                        }
+                    }
+                },
                 modifier = Modifier
                     .height(60.dp)
                     .weight(1f)

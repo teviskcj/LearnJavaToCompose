@@ -6,8 +6,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Card
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -27,7 +26,6 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.composesfo.R
 import com.example.composesfo.domain.model.OrderView
-import com.example.composesfo.presentation.component.TopBarTitle
 import com.example.composesfo.presentation.navigation.Screen
 import com.example.composesfo.presentation.ui.theme.*
 
@@ -40,23 +38,75 @@ fun OrderScreen(
 
     Box(modifier = Modifier
         .fillMaxSize()) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            TopBarTitle(
+        Column {
+            /*TopBarTitle(
                 textOne = "Current",
                 textTwo = "Order"
+            )*/
+            //Spacer(modifier = Modifier.padding(10.dp))
+            OrderTab(
+                tabIndex = viewModel.tabIndex,
+                onTabIndexChange = viewModel::onTabIndexChange,
+                showCurrentOrder = viewModel.showCurrentOrder,
+                onShowCurrentOrderChange = viewModel::onShowCurrentOrderChange
             )
             Spacer(modifier = Modifier.padding(10.dp))
-            OrderList(
-                orderList = viewModel.orderList,
-                navController = navController,
-                getStateColor = viewModel::getStateColor,
-                getStateName = viewModel::getStateName
-            )
-
+            if (viewModel.showCurrentOrder) {
+                OrderList(
+                    orderList = viewModel.currentOrderList,
+                    navController = navController,
+                    getStateColor = viewModel::getStateColor,
+                    getStateName = viewModel::getStateName
+                )
+            }
+            if (!viewModel.showCurrentOrder) {
+                OrderList(
+                    orderList = viewModel.passOrderList,
+                    navController = navController,
+                    getStateColor = viewModel::getStateColor,
+                    getStateName = viewModel::getStateName
+                )
+            }
         }
     }
 
 
+}
+
+@Composable
+fun OrderTab(
+    tabIndex: Int,
+    onTabIndexChange: (Int) -> Unit,
+    showCurrentOrder: Boolean,
+    onShowCurrentOrderChange: (Boolean) -> Unit
+) {
+    val tabData = listOf(
+        stringResource(R.string.current_order),
+        stringResource(R.string.pass_order),
+    )
+    TabRow(
+        selectedTabIndex = tabIndex,
+        backgroundColor = AllButton,
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        tabData.forEachIndexed { index, text ->
+            Tab(
+                selected = tabIndex == index,
+                onClick = {
+                    onTabIndexChange(index)
+                    onShowCurrentOrderChange(!showCurrentOrder)
+                },
+                text = {
+                    Text(
+                        text = text,
+                        color = white,
+                        style = MaterialTheme.typography.button,
+                        modifier = Modifier.padding(top = 8.dp, bottom = 8.dp),
+                    )
+                },
+            )
+        }
+    }
 }
 
 @Composable
@@ -66,7 +116,7 @@ fun OrderList(
     getStateColor: (String) -> Color,
     getStateName: (String) -> String
 ) {
-    LazyColumn {
+    LazyColumn(modifier = Modifier.padding(16.dp)) {
         items(orderList) { orderView ->
             OrderItemCard(
                 navController = navController,

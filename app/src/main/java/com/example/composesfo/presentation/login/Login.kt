@@ -126,11 +126,12 @@ fun LoginForm(
 
             Button(
                 onClick = {
-                          if (navController.backQueue.isEmpty()) {
-                              navController.navigate(route = Screen.RegisterScreen.route)
-                          } else {
-                              navController.popBackStack()
-                          } },
+                    navController.navigate(route = Screen.RegisterScreen.route) {
+                        popUpTo(Screen.LoginScreen.route) {
+                            inclusive = true
+                        }
+                    }
+                },
                 modifier = Modifier
                     .height(60.dp)
                     .weight(1f)

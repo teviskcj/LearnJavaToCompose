@@ -42,13 +42,10 @@ fun FoodDetailsScreen(
     val food = state.food
     val cartList = stateCartList.cartList
     if (cartList.isNotEmpty() && food != null) {
-        cartList.forEach {
-            if (it.foodName == food.foodName) {
-                viewModel.onQuantityChange(it.quantity.toInt())
-            }
-
-
-        }
+        viewModel.addCartQuantity(
+            food = food,
+            cartList = cartList
+        )
     }
 
     Box(modifier = Modifier

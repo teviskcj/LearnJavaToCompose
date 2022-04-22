@@ -11,6 +11,8 @@ import com.example.composesfo.common.Constants
 import com.example.composesfo.common.CurrentUserState
 import com.example.composesfo.common.Resource
 import com.example.composesfo.data.remote.dto.CartDto
+import com.example.composesfo.domain.model.Cart
+import com.example.composesfo.domain.model.Food
 import com.example.composesfo.domain.useCase.CreateCartUseCase
 import com.example.composesfo.domain.useCase.GetCartUseCase
 import com.example.composesfo.domain.useCase.GetFoodUseCase
@@ -39,6 +41,9 @@ class FoodDetailsViewModel @Inject constructor(
     val cartListState: State<CartListState> = _cartListState
 
     var stateQuantity by mutableStateOf(1)
+        private set
+
+    var isQuantityAdded by mutableStateOf(false)
         private set
 
     init {
@@ -112,7 +117,13 @@ class FoodDetailsViewModel @Inject constructor(
         return true
     }
 
-    fun onQuantityChange(quantity: Int) {
-        stateQuantity = quantity
+    fun addCartQuantity(food: Food, cartList: List<Cart>) {
+            for (index in 0..cartList.lastIndex) {
+                if (cartList[index].foodName == food.foodName && !isQuantityAdded) {
+                    stateQuantity = cartList[index].quantity.toInt()
+                    isQuantityAdded = true
+                    break
+                }
+            }
     }
 }

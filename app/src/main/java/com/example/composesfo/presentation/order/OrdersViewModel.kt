@@ -1,7 +1,9 @@
 package com.example.composesfo.presentation.order
 
 import androidx.compose.runtime.State
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.composesfo.common.CurrentUserState
@@ -22,7 +24,14 @@ class OrdersViewModel @Inject constructor(
     private val _state = mutableStateOf(OrderDetailState())
     val state: State<OrderDetailState> = _state
 
-    var orderList = mutableListOf<OrderView>()
+    var currentOrderList = mutableListOf<OrderView>()
+    var passOrderList = mutableListOf<OrderView>()
+
+    var tabIndex by mutableStateOf(0)
+        private set
+
+    var showCurrentOrder by mutableStateOf(true)
+        private set
 
     init {
         getOrderList(CurrentUserState.userId)
@@ -36,7 +45,10 @@ class OrdersViewModel @Inject constructor(
                     if (_state.value.orderView.isNotEmpty()) {
                         _state.value.orderView.forEach {
                             if (it.state != "D" && it.state != "R") {
-                                orderList.add(it)
+                                currentOrderList.add(it)
+                            }
+                            if (it.state == "D") {
+                                passOrderList.add(it)
                             }
                         }
                         //orderList = _state.value.orderView as MutableList<OrderView>
@@ -63,8 +75,18 @@ class OrdersViewModel @Inject constructor(
     fun getStateName(text: String): String{
         return if (text == "P") {
             "Preparing"
-        } else {
+        } else if (text == "S") {
             "Sending"
+        } else {
+            ""
         }
+    }
+
+    fun onTabIndexChange(index: Int) {
+        tabIndex = index
+    }
+
+    fun onShowCurrentOrderChange(boolean: Boolean) {
+        showCurrentOrder = boolean
     }
 }

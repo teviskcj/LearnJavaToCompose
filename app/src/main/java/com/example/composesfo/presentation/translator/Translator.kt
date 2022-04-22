@@ -1,4 +1,4 @@
-package com.example.composesfo.presentation
+package com.example.composesfo.presentation.translator
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -21,7 +21,6 @@ import com.example.composesfo.R
 import com.example.composesfo.presentation.component.TextFieldWithNoIcon
 import com.example.composesfo.presentation.component.TopBarTitle
 import com.example.composesfo.presentation.navigation.Screen
-import com.example.composesfo.presentation.translator.TranslatorViewModel
 import com.example.composesfo.presentation.ui.theme.AllButton
 import com.example.composesfo.presentation.ui.theme.white
 

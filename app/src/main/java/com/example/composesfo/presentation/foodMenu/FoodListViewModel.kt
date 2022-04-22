@@ -1,6 +1,5 @@
 package com.example.composesfo.presentation.foodMenu
 
-import android.util.Log
 import androidx.compose.foundation.ScrollState
 import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
@@ -19,7 +18,6 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-import kotlin.math.roundToInt
 
 @HiltViewModel
 class FoodListViewModel @Inject constructor(
@@ -32,6 +30,9 @@ class FoodListViewModel @Inject constructor(
     var stateList = mutableListOf("")
 
     var stateType by mutableStateOf("")
+        private set
+
+    var typePositionList = mutableListOf(0)
         private set
 
     init {
@@ -102,4 +103,38 @@ class FoodListViewModel @Inject constructor(
         return tempList
     }
 
+    fun scrollToByType(coroutineScope: CoroutineScope, scrollState: ScrollState) {
+        coroutineScope.launch {
+            stateList.forEachIndexed { index, s ->
+                if (stateType == s) {
+                    scrollState.animateScrollTo(typePositionList[index])
+                }
+            }
+        }
+    }
+
+    fun addTypePositionList(type: String, position: Int) {
+        if (type == stateList[1] && typePositionList.size == 1) {
+            typePositionList.add(position - 650)
+        }
+        if (type == stateList[2] && typePositionList.size == 2) {
+            typePositionList.add(position - 650)
+        }
+    }
+
+    fun changeTypeByScrollPosition(currentValue: Int, maxValue: Int) {
+        typePositionList.forEachIndexed { index, position ->
+            if (index != typePositionList.lastIndex) {
+                if (currentValue in position..typePositionList[index+1]) {
+                    stateType = stateList[index]
+                }
+            }
+
+            if (index == typePositionList.lastIndex) {
+                if (currentValue in position..maxValue) {
+                    stateType = stateList[index]
+                }
+            }
+        }
+    }
 }
