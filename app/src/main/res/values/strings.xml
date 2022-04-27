@@ -75,4 +75,10 @@
     <string name="please_enter_word">Please enter word</string>
     <string name="current_order">Current Order</string>
     <string name="pass_order">Pass Order</string>
+
+    <!--Admin Dashboard-->
+    <string name="menu">Menu</string>
+    <string name="history">History</string>
+    <string name="driver">Driver</string>
+    <string name="back">Back</string>
 </resources>

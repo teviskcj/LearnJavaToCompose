@@ -20,6 +20,12 @@ interface SFOApi {
     @GET("/Users/{userId}/Security Questions.json")
     suspend fun getQuestionById(@Path("userId") userId: String): QuestionDto
 
+    @PUT("/Food_Categories/{categoryId}.json")
+    suspend fun createCategory(@Path("categoryId") categoryId: String, @Body foodCategoryDto: FoodCategoryDto)
+
+    @GET("/Food_Categories/.json")
+    suspend fun getCategory(): Map<String, FoodCategoryDto>
+
     @GET("/Foods/.json")
     suspend fun getFoods(): Map<String, FoodDto>
 

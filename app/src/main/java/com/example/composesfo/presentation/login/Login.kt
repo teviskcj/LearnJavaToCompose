@@ -189,7 +189,7 @@ fun LoginForm(
                         navController.backQueue.clear()
                     }
                 }
-
+                navController.navigate(route = Screen.AdminHomeScreen.route)
             },
             modifier = Modifier
                 .height(60.dp)

@@ -55,4 +55,10 @@ object AppModule {
     fun provideWalletRepository(api: SFOApi): WalletRepository {
         return WalletRepositoryImpl(api)
     }
+
+    @Provides
+    @Singleton
+    fun provideFoodCategoryRepository(api: SFOApi): FoodCategoryRepository {
+        return FoodCategoryRepositoryImpl(api)
+    }
 }

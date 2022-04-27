@@ -89,6 +89,11 @@ dependencies {
 
     //Preferences DataStore
     implementation "androidx.datastore:datastore-preferences:1.0.0"
+
+    implementation 'academy.compose.companion:multi-fab:1.2'
+
+    implementation "androidx.compose.animation:animation:1.2.0-alpha08"
+    implementation "androidx.compose.animation:animation-core:1.2.0-alpha08"
 }
 
 // Make sure to always add this after android { ... } section

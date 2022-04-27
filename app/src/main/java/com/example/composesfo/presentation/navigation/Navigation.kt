@@ -5,6 +5,10 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.composesfo.presentation.HomeScreen
+import com.example.composesfo.presentation.admin.adminAddCategory.AdminAddCategoryScreen
+import com.example.composesfo.presentation.admin.adminAddMenu.AdminAddMenuScreen
+import com.example.composesfo.presentation.admin.adminFoodMenu.AdminFoodMenuScreen
+import com.example.composesfo.presentation.admin.adminHome.AdminHomeScreen
 import com.example.composesfo.presentation.translator.TranslatorScreen
 import com.example.composesfo.presentation.cart.CartScreen
 import com.example.composesfo.presentation.foodDetails.FoodDetailsScreen
@@ -33,6 +37,10 @@ fun Navigation() {
         composable(Screen.LoginScreen.route) {
             LoginScreen(navController = navController)
         }
+
+        /**
+         * User Navigation
+         * */
         composable(Screen.HomeScreen.route) {
             HomeScreen(navController = navController)
         }
@@ -71,6 +79,25 @@ fun Navigation() {
         }
         composable(Screen.TranslatorScreen.route) {
             TranslatorScreen(navController = navController)
+        }
+
+        /**
+         * Admin Navigation
+         * */
+        composable(Screen.AdminHomeScreen.route) {
+            AdminHomeScreen(navController = navController)
+        }
+        
+        composable(Screen.AdminFoodMenuScreen.route) {
+            AdminFoodMenuScreen(navController = navController)
+        }
+
+        composable(Screen.AdminAddCategoryScreen.route) {
+            AdminAddCategoryScreen(navController = navController)
+        }
+
+        composable(Screen.AdminAddMenuScreen.route) {
+            AdminAddMenuScreen(navController = navController)
         }
     }
 }
