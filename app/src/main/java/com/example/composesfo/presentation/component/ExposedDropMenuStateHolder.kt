@@ -20,7 +20,8 @@ class ExposedDropMenuStateHolder {
     )
 
     var enabled by mutableStateOf(false)
-    var value by mutableStateOf(items[0])
+    //var value by mutableStateOf(items[0])
+    var value by mutableStateOf("- Please select the item -")
     var selectedIndex by mutableStateOf(-1)
     var size by mutableStateOf(Size.Zero)
     val icon:Int
@@ -36,7 +37,12 @@ class ExposedDropMenuStateHolder {
 
     fun onSelectedIndexChange(index: Int) {
         selectedIndex = index
-        value = items[selectedIndex]
+        //value = items[selectedIndex]
+    }
+
+    // customized can add anything list you want
+    fun onValueChange(newValue: String) {
+        value = newValue
     }
 
     fun onSizeChange(newSize: Size) {

@@ -6,4 +6,6 @@ interface FoodCategoryRepository {
     suspend fun createCategory(categoryId: String, foodCategoryDto: FoodCategoryDto)
 
     suspend fun getCategory(): Map<String, FoodCategoryDto>
+
+    //suspend fun getCategory(onCallListener: CallHelper.CallBack<Map<String, FoodCategoryDto>>)
 }

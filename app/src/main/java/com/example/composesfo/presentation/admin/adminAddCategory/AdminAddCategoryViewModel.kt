@@ -81,4 +81,14 @@ class AdminAddCategoryViewModel @Inject constructor(
             else -> "FC00${count+1}"
         }
     }
+
+    fun getCategoryId(list: List<FoodCategoryDto>): String {
+        val id = list.last().id
+        val num = id.substring(2).toInt() + 1
+        return when {
+            num >= 10 -> "FC0${num}"
+            num >= 100 -> "FC${num}"
+            else -> "FC00${num}"
+        }
+    }
 }

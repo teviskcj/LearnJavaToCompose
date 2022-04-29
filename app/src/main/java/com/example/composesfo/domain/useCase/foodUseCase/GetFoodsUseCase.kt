@@ -1,7 +1,6 @@
-package com.example.composesfo.domain.useCase
+package com.example.composesfo.domain.useCase.foodUseCase
 
 import com.example.composesfo.common.Resource
-import com.example.composesfo.data.remote.dto.toFood
 import com.example.composesfo.domain.model.Food
 import com.example.composesfo.domain.repository.FoodRepository
 import kotlinx.coroutines.flow.Flow
@@ -17,8 +16,8 @@ class GetFoodsUseCase @Inject constructor(
         try {
             emit(Resource.Loading<List<Food>>())
             val list = repository.getFoods().values
-            val foods = list.map { it.toFood() }
-            emit(Resource.Success<List<Food>>(foods))
+            //val foods = list.map { it.toFood() }
+            //emit(Resource.Success<List<Food>>(foods))
         } catch (e: HttpException) {
             emit(Resource.Error<List<Food>>(e.localizedMessage ?: "An unexpected error occurred"))
         } catch (e: IOException) { // no internet connection / server is offline

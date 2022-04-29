@@ -26,11 +26,17 @@ interface SFOApi {
     @GET("/Food_Categories/.json")
     suspend fun getCategory(): Map<String, FoodCategoryDto>
 
+    /*@GET("/Food_Categories/.json")
+    suspend fun getCategory(): Call<Map<String, FoodCategoryDto>>*/
+
     @GET("/Foods/.json")
     suspend fun getFoods(): Map<String, FoodDto>
 
     @GET("/Foods/{foodId}.json")
     suspend fun getFoodById(@Path("foodId") foodId: String): FoodDto
+
+    @PUT("/Foods/{foodId}.json")
+    suspend fun createFood(@Path("foodId") foodId: String, @Body foodDto: FoodDto)
 
     @PUT("/Cart List/User View/{userId}/Foods/{foodId}.json")
     suspend fun createCart(@Path("userId") userId: String, @Path("foodId") foodId: String, @Body cartDto: CartDto)

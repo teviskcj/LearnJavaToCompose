@@ -248,7 +248,7 @@ fun CartListItem(
             }
         ) {
             Icon(
-                painter = painterResource(id = R.drawable.ic_delete_cart_item),
+                painter = painterResource(id = R.drawable.ic_delete),
                 contentDescription = stringResource(R.string.delete_cart_item),
                 tint = AllButton
             )

@@ -10,7 +10,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.composesfo.common.Resource
 import com.example.composesfo.domain.model.Food
-import com.example.composesfo.domain.useCase.GetFoodsUseCase
+import com.example.composesfo.domain.useCase.foodUseCase.GetFoodsUseCase
 import com.example.composesfo.presentation.ui.theme.AllButton
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope

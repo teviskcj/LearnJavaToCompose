@@ -1,17 +1,14 @@
 package com.example.composesfo.presentation.admin.adminFoodMenu
 
-import androidx.compose.animation.core.animateFloatAsState
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ImageBitmap
-import androidx.compose.ui.res.imageResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -20,13 +17,11 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.composesfo.R
-import com.example.composesfo.presentation.component.MultiFabItem
 import com.example.composesfo.presentation.component.MultiFabState
-import com.example.composesfo.presentation.component.MultiFloatingActionButton
 import com.example.composesfo.presentation.component.noRippleClickable
 import com.example.composesfo.presentation.navigation.Screen
-import com.example.composesfo.presentation.ui.theme.black
 import com.example.composesfo.presentation.ui.theme.lightgraybg
+import com.example.composesfo.presentation.ui.theme.white
 
 @Composable
 fun AdminFoodMenuScreen(
@@ -34,6 +29,7 @@ fun AdminFoodMenuScreen(
     viewModel: AdminFoodMenuViewModel = hiltViewModel()
 ) {
     val stateCategory = viewModel.stateGetCategory.value
+    val categoryList = viewModel.getCategoryList(viewModel.categoryList)
     var toState by remember { mutableStateOf(MultiFabState.COLLAPSED) }
     Scaffold(
         topBar = {
@@ -52,7 +48,7 @@ fun AdminFoodMenuScreen(
                         navController.popBackStack()
                     }) {
                         Icon(
-                            painter = painterResource(id = R.drawable.ic_left),
+                            painter = painterResource(id = R.drawable.ic_back),
                             contentDescription = stringResource(R.string.back)
                         )
                     }
@@ -78,11 +74,45 @@ fun AdminFoodMenuScreen(
                             contentDescription = ""
                         )
                     }
+
+                    IconButton(onClick = { viewModel.onShowDropDownMenuChange(true) }) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_more_button),
+                            contentDescription = ""
+                        )
+                    }
+                    DropdownMenu(
+                        expanded = viewModel.showDropDownMenu,
+                        onDismissRequest = { viewModel.onShowDropDownMenuChange(false) }
+                    ) {
+                        DropdownMenuItem(
+                            onClick = {
+                                navController.navigate(route = Screen.AdminAddFoodScreen.route)
+                                viewModel.onShowDropDownMenuChange(false)
+                            }
+                        ) {
+                            Text(text = "Add Food")
+                        }
+                        DropdownMenuItem(
+                            onClick = {
+                                navController.navigate(route = Screen.AdminAddCategoryScreen.route)
+                                viewModel.onShowDropDownMenuChange(false)
+                            }
+                        ) {
+                            Text(text = "Add Category")
+                        }
+                        DropdownMenuItem(onClick = {}) {
+                            Text(text = "Edit Category")
+                        }
+                        DropdownMenuItem(onClick = {}) {
+                            Text(text = "Delete Category")
+                        }
+                    }
                 }
             )
         },
         backgroundColor = lightgraybg,
-        floatingActionButton = {
+        /*floatingActionButton = {
             MultiFloatingActionButton(
                 ImageBitmap.imageResource(id = R.drawable.plus),
                 listOf(
@@ -99,17 +129,17 @@ fun AdminFoodMenuScreen(
                 }
             ) {
                 if (it.identifier == "category") {
-                    navController.navigate(route = Screen.AdminAddCategoryScreen.route)
+                    navController.navigate(route = Screen.FoodCategoryMenuScreen.route)
                 }
 
                 if (it.identifier == "menu") {
                     navController.navigate(route = Screen.AdminAddMenuScreen.route)
                 }
             }
-        }
+        }*/
     ) {
         Column(
-            modifier = Modifier.padding(16.dp)
+            modifier = Modifier.padding(0.dp)
         ) {
             /*Spacer(modifier = Modifier.padding(10.dp))
             Button(
@@ -132,20 +162,42 @@ fun AdminFoodMenuScreen(
                     modifier = Modifier.padding(top = 8.dp, bottom = 8.dp)
                 )
             }*/
-            Spacer(modifier = Modifier.padding(10.dp))
+            /*Spacer(modifier = Modifier.padding(10.dp))
             TypeList(
                 list = viewModel.getCategoryList(stateCategory.categoryList),
                 getColor = viewModel::getColor,
                 onTypeChange = viewModel::onTypeChange
             )
+            Spacer(modifier = Modifier.padding(10.dp))*/
+            /*if (stateCategory.categoryList.isNotEmpty()) {
+                CategoryTab(
+                    tabData = viewModel.getCategoryList(stateCategory.categoryList),
+                    tabIndex = viewModel.tabIndex,
+                    onTabIndexChange = viewModel::onTabIndexChange,
+                    onTypeChange = viewModel::onTypeChange
+                )
+            }*/
+
+            if (categoryList.isNotEmpty()) {
+                CategoryTab(
+                    tabData = categoryList,
+                    tabIndex = viewModel.tabIndex,
+                    onTabIndexChange = viewModel::onTabIndexChange,
+                    onTypeChange = viewModel::onTypeChange
+                )
+            }
         }
-        val alpha = if (toState == MultiFabState.EXPANDED) 0.4f else 0f
+        /*val alpha = if (toState == MultiFabState.EXPANDED) 0.4f else 0f
         Box(
             modifier = Modifier
                 .alpha(animateFloatAsState(alpha).value)
                 .background(black)
                 .fillMaxSize()
-        )
+        )*/
+    }
+
+    BackHandler(enabled = viewModel.showDropDownMenu) {
+        viewModel.onShowDropDownMenuChange(false)
     }
 }
 
@@ -188,6 +240,38 @@ fun TypeList(
                         )
                 )
             }
+        }
+    }
+}
+
+@Composable
+fun CategoryTab(
+    tabData: List<String>,
+    tabIndex: Int,
+    onTabIndexChange: (Int) -> Unit,
+    onTypeChange: (String) -> Unit
+) {
+    ScrollableTabRow(
+        selectedTabIndex = tabIndex,
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        tabData.forEachIndexed { index, text ->
+            Tab(
+                selected = tabIndex == index,
+                onClick = {
+                    onTabIndexChange(index)
+                    onTypeChange(text)
+                    //onShowCurrentOrderChange(!showCurrentOrder)
+                },
+                text = {
+                    Text(
+                        text = text,
+                        color = white,
+                        style = MaterialTheme.typography.button,
+                        modifier = Modifier.padding(top = 8.dp, bottom = 8.dp),
+                    )
+                },
+            )
         }
     }
 }

@@ -1,7 +1,6 @@
-package com.example.composesfo.domain.useCase
+package com.example.composesfo.domain.useCase.foodUseCase
 
 import com.example.composesfo.common.Resource
-import com.example.composesfo.data.remote.dto.toFood
 import com.example.composesfo.domain.model.Food
 import com.example.composesfo.domain.repository.FoodRepository
 import kotlinx.coroutines.flow.Flow
@@ -16,8 +15,8 @@ class GetFoodUseCase @Inject constructor(
     operator fun invoke(foodId: String): Flow<Resource<Food>> = flow {
         try {
             emit(Resource.Loading<Food>())
-            val food = repository.getFoodById(foodId).toFood()
-            emit(Resource.Success<Food>(food))
+            //val food = repository.getFoodById(foodId).toFood()
+            //emit(Resource.Success<Food>(food))
         } catch (e: HttpException) {
             emit(Resource.Error<Food>(e.localizedMessage ?: "An unexpected error occurred"))
         } catch (e: IOException) { // no internet connection / server is offline

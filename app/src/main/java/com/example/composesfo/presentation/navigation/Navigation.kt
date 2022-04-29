@@ -6,10 +6,10 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.composesfo.presentation.HomeScreen
 import com.example.composesfo.presentation.admin.adminAddCategory.AdminAddCategoryScreen
-import com.example.composesfo.presentation.admin.adminAddMenu.AdminAddMenuScreen
+import com.example.composesfo.presentation.admin.adminAddFood.AdminAddFoodScreen
 import com.example.composesfo.presentation.admin.adminFoodMenu.AdminFoodMenuScreen
 import com.example.composesfo.presentation.admin.adminHome.AdminHomeScreen
-import com.example.composesfo.presentation.translator.TranslatorScreen
+import com.example.composesfo.presentation.admin.foodCategoryMenu.FoodCategoryMenuScreen
 import com.example.composesfo.presentation.cart.CartScreen
 import com.example.composesfo.presentation.foodDetails.FoodDetailsScreen
 import com.example.composesfo.presentation.foodMenu.MenuScreen
@@ -21,9 +21,12 @@ import com.example.composesfo.presentation.payment.PaymentScreen
 import com.example.composesfo.presentation.profile.EditProfileScreen
 import com.example.composesfo.presentation.profile.ProfileScreen
 import com.example.composesfo.presentation.register.RegisterScreen
+import com.example.composesfo.presentation.translator.TranslatorScreen
 import com.example.composesfo.presentation.wallet.ReloadFormScreen
 import com.example.composesfo.presentation.wallet.WalletScreen
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
 
+@ExperimentalPermissionsApi
 @Composable
 fun Navigation() {
     val navController = rememberNavController()
@@ -92,12 +95,16 @@ fun Navigation() {
             AdminFoodMenuScreen(navController = navController)
         }
 
+        composable(Screen.FoodCategoryMenuScreen.route) {
+            FoodCategoryMenuScreen(navController = navController)
+        }
+
         composable(Screen.AdminAddCategoryScreen.route) {
             AdminAddCategoryScreen(navController = navController)
         }
 
-        composable(Screen.AdminAddMenuScreen.route) {
-            AdminAddMenuScreen(navController = navController)
+        composable(Screen.AdminAddFoodScreen.route) {
+            AdminAddFoodScreen(navController = navController)
         }
     }
 }

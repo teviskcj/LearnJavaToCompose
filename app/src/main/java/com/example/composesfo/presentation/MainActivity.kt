@@ -7,8 +7,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.composesfo.presentation.navigation.Navigation
 import com.example.composesfo.presentation.ui.theme.ComposeSFOTheme
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import dagger.hilt.android.AndroidEntryPoint
 
+@ExperimentalPermissionsApi
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -162,6 +164,7 @@ fun RegisterScreen() {
 }*/
 
 
+@ExperimentalPermissionsApi
 @Preview(showBackground = true)
 @Composable
 fun DefaultPreview() {

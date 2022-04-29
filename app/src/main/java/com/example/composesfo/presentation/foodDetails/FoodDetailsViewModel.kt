@@ -15,7 +15,7 @@ import com.example.composesfo.domain.model.Cart
 import com.example.composesfo.domain.model.Food
 import com.example.composesfo.domain.useCase.CreateCartUseCase
 import com.example.composesfo.domain.useCase.GetCartUseCase
-import com.example.composesfo.domain.useCase.GetFoodUseCase
+import com.example.composesfo.domain.useCase.foodUseCase.GetFoodUseCase
 import com.example.composesfo.presentation.cart.CartListState
 import com.example.composesfo.presentation.cart.CartState
 import dagger.hilt.android.lifecycle.HiltViewModel
