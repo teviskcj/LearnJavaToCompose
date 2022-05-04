@@ -28,7 +28,7 @@ fun AdminFoodMenuScreen(
     navController: NavController,
     viewModel: AdminFoodMenuViewModel = hiltViewModel()
 ) {
-    val stateCategory = viewModel.stateGetCategory.value
+    val stateCategory = viewModel.stateGetCategories.value
     val categoryList = viewModel.getCategoryList(viewModel.categoryList)
     var toState by remember { mutableStateOf(MultiFabState.COLLAPSED) }
     Scaffold(
@@ -101,10 +101,31 @@ fun AdminFoodMenuScreen(
                         ) {
                             Text(text = "Add Category")
                         }
-                        DropdownMenuItem(onClick = {}) {
+                        DropdownMenuItem(
+                            onClick = {
+                                if (stateCategory.categoryList.isNotEmpty()) {
+                                    val id = viewModel.getCategoryId(
+                                        stateCategory.categoryList,
+                                        viewModel.selectedCategory
+                                    )
+                                    navController.navigate(route = Screen.AdminAddCategoryScreen.route + "/${id}")
+                                    viewModel.onShowDropDownMenuChange(false)
+                                }
+                            }
+                        ) {
                             Text(text = "Edit Category")
                         }
-                        DropdownMenuItem(onClick = {}) {
+                        DropdownMenuItem(
+                            onClick = {
+                                val id = viewModel.getCategoryId(
+                                    stateCategory.categoryList,
+                                    viewModel.selectedCategory
+                                )
+                                viewModel.deleteCartList(id)
+                                viewModel.onShowDropDownMenuChange(false)
+                                //viewModel.reload()
+                            }
+                        ) {
                             Text(text = "Delete Category")
                         }
                     }

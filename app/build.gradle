@@ -96,6 +96,8 @@ dependencies {
     implementation "androidx.compose.animation:animation-core:1.2.0-alpha08"
 
     implementation "com.google.accompanist:accompanist-permissions:0.18.0"
+
+    implementation "com.google.accompanist:accompanist-flowlayout:0.17.0"
 }
 
 // Make sure to always add this after android { ... } section

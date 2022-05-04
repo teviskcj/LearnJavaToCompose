@@ -24,7 +24,13 @@ interface SFOApi {
     suspend fun createCategory(@Path("categoryId") categoryId: String, @Body foodCategoryDto: FoodCategoryDto)
 
     @GET("/Food_Categories/.json")
-    suspend fun getCategory(): Map<String, FoodCategoryDto>
+    suspend fun getCategoryList(): Map<String, FoodCategoryDto>
+
+    @GET("/Food_Categories/{categoryId}.json")
+    suspend fun getCategoryById(@Path("categoryId") categoryId: String): FoodCategoryDto
+
+    @DELETE("/Food_Categories/{categoryId}.json")
+    suspend fun deleteFoodCategory(@Path("categoryId") categoryId: String)
 
     /*@GET("/Food_Categories/.json")
     suspend fun getCategory(): Call<Map<String, FoodCategoryDto>>*/

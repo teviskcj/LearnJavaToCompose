@@ -201,7 +201,7 @@ fun FoodList(
                 FoodListItem(
                     food = food,
                     onItemClick = {
-                        navController.navigate(route = Screen.FoodDetailsScreen.route + "/${it.foodName}")
+                        navController.navigate(route = Screen.FoodDetailsScreen.route + "/${it.food_name}")
                     }
                 )
             }
@@ -287,7 +287,7 @@ fun FoodListItem(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                text = food.foodName,
+                text = food.food_name,
                 textAlign = TextAlign.Center,
                 fontSize = 24.sp,
                 fontWeight = FontWeight.Bold,
@@ -295,7 +295,7 @@ fun FoodListItem(
             )
 
             val painter = rememberImagePainter(
-                data = food.foodImage,
+                data = food.food_image_url,
                 builder = {
                     //placeholder(R.drawable.ic_image_placeholder)
                     crossfade(500)
@@ -313,13 +313,13 @@ fun FoodListItem(
             )
 
             Text(
-                text = "RM ${food.foodPrice}.00",
+                text = "RM ${food.food_price}.00",
                 textAlign = TextAlign.Center,
                 fontSize = 18.sp
             )
 
             Text(
-                text = food.foodDescription,
+                text = food.food_description,
                 textAlign = TextAlign.Center,
                 fontSize = 15.sp
             )

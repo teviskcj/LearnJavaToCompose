@@ -72,8 +72,8 @@ fun FoodDetailsScreen(
                 onClick = {
                     val cartDto = food?.let {
                         CartDto(
-                            foodName = food.foodName,
-                            foodPrice = food.foodPrice,
+                            foodName = food.food_name,
+                            foodPrice = food.food_price,
                             quantity = viewModel.stateQuantity.toString()
                         )
                     }
@@ -110,7 +110,7 @@ fun DisplayFoodDetail(food: Food) {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         val painter = rememberImagePainter(
-            data = food.foodImage,
+            data = food.food_image_url,
             builder = {
                 crossfade(500)
             }
@@ -126,20 +126,20 @@ fun DisplayFoodDetail(food: Food) {
         )
 
         Text(
-            text = food.foodName,
+            text = food.food_name,
             textAlign = TextAlign.Center,
             fontSize = 24.sp,
             fontWeight = FontWeight.Bold
         )
 
         Text(
-            text = food.foodDescription,
+            text = food.food_description,
             textAlign = TextAlign.Center,
             fontSize = 18.sp
         )
 
         Text(
-            text = "RM ${food.foodPrice}.00",
+            text = "RM ${food.food_price}.00",
             textAlign = TextAlign.Center,
             fontSize = 18.sp
         )

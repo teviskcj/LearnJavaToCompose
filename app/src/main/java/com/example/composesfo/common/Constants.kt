@@ -9,5 +9,6 @@ object Constants {
     const val PARAM_USER_ID = "userId"
     const val PARAM_FOOD_ID = "foodId"
     const val PARAM_ORDER_ID = "orderId"
+    const val PARAM_CATEGORY_ID = "categoryId"
     val EMPTY_IMAGE_URI: Uri = Uri.parse("file://dev/null")
 }

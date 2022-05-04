@@ -30,7 +30,7 @@ fun FoodCategoryMenuScreen(
     navController: NavController,
     viewModel: FoodCategoryViewModel = hiltViewModel()
 ) {
-    val state = viewModel.stateGetCategory.value
+    val state = viewModel.stateGetCategories.value
 
     var items by remember {
         mutableStateOf(

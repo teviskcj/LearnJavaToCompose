@@ -58,7 +58,7 @@ class FoodListViewModel @Inject constructor(
 
     private fun addStateList(list: List<Food>) {
         var tempList = arrayListOf<String>()
-        if (list.isNotEmpty()) {
+        /*if (list.isNotEmpty()) {
             list.forEach {
                 if (it.foodPopular == "Y") {
                     //tempList.add("Popular")
@@ -66,7 +66,7 @@ class FoodListViewModel @Inject constructor(
                 }
                 tempList.add(it.foodCategory)
             }
-        }
+        }*/
         stateList = tempList.toSet().toList().toMutableList()
         stateType = stateList[0]
     }
@@ -86,7 +86,7 @@ class FoodListViewModel @Inject constructor(
     fun getFoodListByType(type: String, list: List<Food>): List<Food> {
         val tempList = mutableListOf<Food>()
 
-        if (type == "Popular") {
+        /*if (type == "Popular") {
             list.forEach {
                 if (it.foodPopular == "Y") {
                     tempList.add(it)
@@ -99,7 +99,7 @@ class FoodListViewModel @Inject constructor(
             if (it.foodCategory == type) {
                 tempList.add(it)
             }
-        }
+        }*/
         return tempList
     }
 

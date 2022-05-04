@@ -103,6 +103,10 @@ fun Navigation() {
             AdminAddCategoryScreen(navController = navController)
         }
 
+        composable(Screen.AdminAddCategoryScreen.route + "/{categoryId}") {
+            AdminAddCategoryScreen(navController = navController)
+        }
+
         composable(Screen.AdminAddFoodScreen.route) {
             AdminAddFoodScreen(navController = navController)
         }

@@ -12,8 +12,16 @@ class FoodCategoryRepositoryImpl @Inject constructor(
         return api.createCategory(categoryId, foodCategoryDto)
     }
 
-    override suspend fun getCategory(): Map<String, FoodCategoryDto> {
-        return api.getCategory()
+    override suspend fun getCategoryList(): Map<String, FoodCategoryDto> {
+        return api.getCategoryList()
+    }
+
+    override suspend fun getCategoryById(categoryId: String): FoodCategoryDto {
+        return api.getCategoryById(categoryId)
+    }
+
+    override suspend fun deleteCategory(categoryId: String) {
+        return api.deleteFoodCategory(categoryId)
     }
 
     /*override suspend fun getCategory(onCallListener: CallHelper.CallBack<Map<String, FoodCategoryDto>>) {

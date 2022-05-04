@@ -119,7 +119,7 @@ class FoodDetailsViewModel @Inject constructor(
 
     fun addCartQuantity(food: Food, cartList: List<Cart>) {
             for (index in 0..cartList.lastIndex) {
-                if (cartList[index].foodName == food.foodName && !isQuantityAdded) {
+                if (cartList[index].foodName == food.food_name && !isQuantityAdded) {
                     stateQuantity = cartList[index].quantity.toInt()
                     isQuantityAdded = true
                     break

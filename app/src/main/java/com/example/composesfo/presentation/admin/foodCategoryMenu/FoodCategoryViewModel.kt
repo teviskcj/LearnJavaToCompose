@@ -8,7 +8,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.composesfo.common.Resource
 import com.example.composesfo.domain.useCase.foodCategoryUseCase.FoodCategoryUseCase
-import com.example.composesfo.presentation.admin.adminAddCategory.GetCategoryState
+import com.example.composesfo.presentation.admin.adminAddCategory.GetCategoriesState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -18,8 +18,8 @@ import javax.inject.Inject
 class FoodCategoryViewModel @Inject constructor(
     private val foodCategoryUseCase: FoodCategoryUseCase
 ) : ViewModel() {
-    private val _stateGetCategory = mutableStateOf(GetCategoryState())
-    val stateGetCategory: State<GetCategoryState> = _stateGetCategory
+    private val _stateGetCategory = mutableStateOf(GetCategoriesState())
+    val stateGetCategories: State<GetCategoriesState> = _stateGetCategory
 
     var isSelected by mutableStateOf(false)
         private set
@@ -32,13 +32,13 @@ class FoodCategoryViewModel @Inject constructor(
         foodCategoryUseCase.getFoodCategoriesUseCase().onEach { result ->
             when(result) {
                 is Resource.Success -> {
-                    _stateGetCategory.value = GetCategoryState(categoryList = result.data ?: emptyList())
+                    _stateGetCategory.value = GetCategoriesState(categoryList = result.data ?: emptyList())
                 }
                 is Resource.Error -> {
-                    _stateGetCategory.value = GetCategoryState(error = result.message ?: "An unexpected error occurred")
+                    _stateGetCategory.value = GetCategoriesState(error = result.message ?: "An unexpected error occurred")
                 }
                 is Resource.Loading -> {
-                    _stateGetCategory.value = GetCategoryState(isLoading = true)
+                    _stateGetCategory.value = GetCategoriesState(isLoading = true)
                 }
             }
         }.launchIn(viewModelScope)

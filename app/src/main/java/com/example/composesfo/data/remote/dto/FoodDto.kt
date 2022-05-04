@@ -1,5 +1,7 @@
 package com.example.composesfo.data.remote.dto
 
+import com.example.composesfo.domain.model.Food
+
 data class FoodDto(
     val id: String,
     val food_description: String,
@@ -16,15 +18,14 @@ data class FoodDto(
     val foodName: String,
     val foodPopular: String,
     val foodPrice: String
-)
+)*/
 
 fun FoodDto.toFood(): Food {
     return Food(
-        foodCategory = foodCategory,
-        foodDescription = foodDescription,
-        foodImage = foodImage,
-        foodName = foodName,
-        foodPrice = foodPrice,
-        foodPopular = foodPopular
+        id = id,
+        food_description = food_description,
+        food_image_url = food_image_url,
+        food_name = food_name,
+        food_price = food_price
     )
-}*/
+}

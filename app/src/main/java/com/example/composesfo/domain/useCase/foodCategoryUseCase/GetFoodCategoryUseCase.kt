@@ -9,20 +9,20 @@ import retrofit2.HttpException
 import java.io.IOException
 import javax.inject.Inject
 
-class GetFoodCategoriesUseCase @Inject constructor(
+class GetFoodCategoryUseCase @Inject constructor(
     private val repository: FoodCategoryRepository
 ) {
-    operator fun invoke(): Flow<Resource<List<FoodCategoryDto>>> = flow {
+    operator fun invoke(categoryId: String): Flow<Resource<FoodCategoryDto>> = flow {
         try {
-            emit(Resource.Loading<List<FoodCategoryDto>>())
-            val list = repository.getCategoryList().values
-            emit(Resource.Success<List<FoodCategoryDto>>(list.toList()))
+            emit(Resource.Loading<FoodCategoryDto>())
+            val category = repository.getCategoryById(categoryId)
+            emit(Resource.Success<FoodCategoryDto>(category))
         } catch (e: HttpException) {
             emit(
-                Resource.Error<List<FoodCategoryDto>>(e.localizedMessage ?: "An unexpected error occurred")
+                Resource.Error<FoodCategoryDto>(e.localizedMessage ?: "An unexpected error occurred")
             )
         } catch (e: IOException) { // no internet connection / server is offline
-            emit(Resource.Error<List<FoodCategoryDto>>("Couldn't reach server. Check your internet connection"))
+            emit(Resource.Error<FoodCategoryDto>("Couldn't reach server. Check your internet connection"))
         }
     }
 }

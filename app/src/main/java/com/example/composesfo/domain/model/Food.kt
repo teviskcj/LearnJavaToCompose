@@ -1,10 +1,9 @@
 package com.example.composesfo.domain.model
 
 data class Food(
-    val foodCategory: String,
-    val foodDescription: String,
-    val foodImage: String,
-    val foodName: String,
-    val foodPopular: String,
-    val foodPrice: String
+    val id: String,
+    val food_description: String,
+    val food_image_url: String,
+    val food_name: String,
+    val food_price: String
 )
