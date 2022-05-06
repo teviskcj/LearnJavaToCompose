@@ -1,5 +1,6 @@
-package com.example.composesfo.presentation.admin.adminAddFood
+package com.example.composesfo.presentation.admin.adminEditFood
 
+import android.net.Uri
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -19,22 +20,45 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import coil.compose.rememberImagePainter
 import com.example.composesfo.R
-import com.example.composesfo.common.Constants.EMPTY_IMAGE_URI
+import com.example.composesfo.common.Constants
 import com.example.composesfo.data.remote.dto.FoodDto
 import com.example.composesfo.presentation.component.GallerySelect
 import com.example.composesfo.presentation.component.TextFieldWithNoIcon
 import com.example.composesfo.presentation.navigation.Screen
 import com.example.composesfo.presentation.ui.theme.lightgraybg
 import com.example.composesfo.presentation.ui.theme.orange
+import com.example.composesfo.presentation.ui.theme.red
 import com.example.composesfo.presentation.ui.theme.white
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 
 @ExperimentalPermissionsApi
 @Composable
-fun AdminAddFoodScreen(
+fun AdminEditFoodScreen(
     navController: NavController,
-    viewModel: AdminAddFoodViewModel = hiltViewModel()
+    viewModel: AdminEditFoodViewModel = hiltViewModel()
 ) {
+    val state = viewModel.state.value
+    val food = state.food
+    var imageUri by remember { mutableStateOf(Constants.EMPTY_IMAGE_URI) }
+    var showGallerySelect by remember { mutableStateOf(false) }
+
+    food?.run {
+        viewModel.onNameChange(food_name)
+        viewModel.onDescriptionChange(food_description)
+        viewModel.onPriceChange(food_price)
+        imageUri = Uri.parse(food_image_url)
+    }
+
+    if (viewModel.showGallery) {
+        GallerySelect(
+            modifier = Modifier,
+            onImageUri = { uri ->
+                showGallerySelect = false
+                imageUri = uri
+            }
+        )
+    }
+
     Scaffold(
         topBar = {
             /*TopAppBarWithBackAndAdd(
@@ -68,18 +92,7 @@ fun AdminAddFoodScreen(
             modifier = Modifier
                 .fillMaxSize()
         ) {
-            var imageUri by remember { mutableStateOf(EMPTY_IMAGE_URI) }
-            var showGallerySelect by remember { mutableStateOf(false) }
 
-            if (viewModel.showGallery) {
-                GallerySelect(
-                    modifier = Modifier,
-                    onImageUri = { uri ->
-                        showGallerySelect = false
-                        imageUri = uri
-                    }
-                )
-            }
 
             Column(
                 modifier = Modifier.padding(16.dp),
@@ -131,20 +144,20 @@ fun AdminAddFoodScreen(
 
                 Button(
                     onClick = {
-                        val id = viewModel.getFoodId()
-                        val foodDto = FoodDto(
-                            id = id,
-                            food_description = viewModel.description,
-                            food_image_url = imageUri.toString(),
-                            food_name = viewModel.name,
-                            food_price = viewModel.price
-                        )
+                        food?.run {
+                            val foodDto = FoodDto(
+                                id = id,
+                                food_description = viewModel.description,
+                                food_image_url = imageUri.toString(),
+                                food_name = viewModel.name,
+                                food_price = viewModel.price
+                            )
+                            viewModel.editFood(id, foodDto)
 
-                        viewModel.createFood(id, foodDto)
-
-                        navController.navigate(route = Screen.AdminFoodMenuScreen.route) {
-                            popUpTo(Screen.AdminHomeScreen.route) {
-                                inclusive = true
+                            navController.navigate(route = Screen.AdminFoodMenuScreen.route) {
+                                popUpTo(Screen.AdminHomeScreen.route) {
+                                    inclusive = true
+                                }
                             }
                         }
                     },
@@ -158,7 +171,30 @@ fun AdminAddFoodScreen(
                     shape = RoundedCornerShape(14.dp)
                 ) {
                     Text(
-                        text = "Add Food",
+                        text = "Edit Food",
+                        color = white,
+                        style = MaterialTheme.typography.button,
+                        modifier = Modifier.padding(top = 8.dp, bottom = 8.dp)
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(10.dp))
+
+                Button(
+                    onClick = {
+
+                    },
+                    colors = ButtonDefaults.buttonColors(backgroundColor = red),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(
+                            top = 30.dp,
+                            bottom = 34.dp
+                        ),
+                    shape = RoundedCornerShape(14.dp)
+                ) {
+                    Text(
+                        text = "Delete Food",
                         color = white,
                         style = MaterialTheme.typography.button,
                         modifier = Modifier.padding(top = 8.dp, bottom = 8.dp)
@@ -172,6 +208,6 @@ fun AdminAddFoodScreen(
 @ExperimentalPermissionsApi
 @Preview(showBackground = true)
 @Composable
-fun AdminAddFoodScreenPreview() {
-    AdminAddFoodScreen(navController = rememberNavController())
+fun AdminEditFoodScreenPreview() {
+    AdminEditFoodScreen(navController = rememberNavController())
 }

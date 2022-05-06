@@ -7,6 +7,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.composesfo.presentation.HomeScreen
 import com.example.composesfo.presentation.admin.adminAddCategory.AdminAddCategoryScreen
 import com.example.composesfo.presentation.admin.adminAddFood.AdminAddFoodScreen
+import com.example.composesfo.presentation.admin.adminEditFood.AdminEditFoodScreen
 import com.example.composesfo.presentation.admin.adminFoodMenu.AdminFoodMenuScreen
 import com.example.composesfo.presentation.admin.adminHome.AdminHomeScreen
 import com.example.composesfo.presentation.admin.foodCategoryMenu.FoodCategoryMenuScreen
@@ -109,6 +110,10 @@ fun Navigation() {
 
         composable(Screen.AdminAddFoodScreen.route) {
             AdminAddFoodScreen(navController = navController)
+        }
+
+        composable(Screen.AdminEditFoodScreen.route + "/{foodId}") {
+            AdminEditFoodScreen(navController = navController)
         }
     }
 }

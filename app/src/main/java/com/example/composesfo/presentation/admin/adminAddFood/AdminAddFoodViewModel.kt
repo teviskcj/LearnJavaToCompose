@@ -32,7 +32,7 @@ class AdminAddFoodViewModel @Inject constructor(
 
     var showGallery by mutableStateOf(false)
 
-    fun createCategory(foodId: String, foodDto: FoodDto) {
+    fun createFood(foodId: String, foodDto: FoodDto) {
         foodUseCase.createFoodUseCase(foodId, foodDto).onEach { result ->
             when(result) {
                 is Resource.Success -> {

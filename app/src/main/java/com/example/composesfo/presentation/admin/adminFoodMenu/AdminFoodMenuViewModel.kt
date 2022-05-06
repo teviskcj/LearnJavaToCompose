@@ -2,15 +2,16 @@ package com.example.composesfo.presentation.admin.adminFoodMenu
 
 import android.util.Log
 import androidx.compose.runtime.*
-import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.composesfo.common.Resource
 import com.example.composesfo.data.remote.dto.FoodCategoryDto
+import com.example.composesfo.domain.model.Food
 import com.example.composesfo.domain.useCase.foodCategoryUseCase.FoodCategoryUseCase
+import com.example.composesfo.domain.useCase.foodUseCase.FoodUseCase
 import com.example.composesfo.presentation.admin.adminAddCategory.GetCategoriesState
-import com.example.composesfo.presentation.cart.DeleteCartState
+import com.example.composesfo.presentation.foodMenu.FoodListState
 import com.example.composesfo.presentation.ui.theme.AllButton
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
@@ -19,8 +20,12 @@ import javax.inject.Inject
 
 @HiltViewModel
 class AdminFoodMenuViewModel @Inject constructor(
-    private val foodCategoryUseCase: FoodCategoryUseCase
+    private val foodCategoryUseCase: FoodCategoryUseCase,
+    private val foodUseCase: FoodUseCase,
 ) : ViewModel() {
+    private val _stateFoods = mutableStateOf(FoodListState())
+    val stateFoods: State<FoodListState> = _stateFoods
+
     private val _stateGetCategory = mutableStateOf(GetCategoriesState())
     val stateGetCategories: State<GetCategoriesState> = _stateGetCategory
 
@@ -45,6 +50,7 @@ class AdminFoodMenuViewModel @Inject constructor(
 
     init {
         getCategoryList()
+        getFoods()
     }
 
     fun reload() {
@@ -93,6 +99,23 @@ class AdminFoodMenuViewModel @Inject constructor(
         }.launchIn(viewModelScope)
     }
 
+    private fun getFoods() {
+        foodUseCase.getFoodsUseCase().onEach { result ->
+            when(result) {
+                is Resource.Success -> {
+                    _stateFoods.value = FoodListState(foods = result.data ?: emptyList())
+                    //addFoodList(_stateFoods.value.foods)
+                }
+                is Resource.Error -> {
+                    _stateFoods.value = FoodListState(error = result.message ?: "An unexpected error occurred")
+                }
+                is Resource.Loading -> {
+                    _stateFoods.value = FoodListState(isLoading = true)
+                }
+            }
+        }.launchIn(viewModelScope)
+    }
+
     fun getColor(text: String): Color {
         return if (text == selectedCategory) {
             AllButton
@@ -124,6 +147,35 @@ class AdminFoodMenuViewModel @Inject constructor(
             }
         }
         return ""
+    }
+
+    fun getCategoryFoodList(text: String, list: List<FoodCategoryDto>): List<String> {
+        list.forEach {
+            if (it.category_name == text) {
+                return it.foods
+            }
+        }
+        return listOf("")
+    }
+
+    fun getFoodListByCategory(categoryFoodList: List<String>, list: List<Food>): List<Food> {
+        val tempList = mutableListOf<Food>()
+
+        /*if (type == "Popular") {
+            list.forEach {
+                if (it.foodPopular == "Y") {
+                    tempList.add(it)
+                }
+            }
+            return tempList
+        }*/
+
+        list.forEach {
+            if (categoryFoodList.contains(it.food_name)) {
+                tempList.add(it)
+            }
+        }
+        return tempList
     }
 
     fun onTypeChange(text: String) {

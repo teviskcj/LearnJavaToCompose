@@ -1,22 +1,31 @@
 package com.example.composesfo.presentation.admin.adminFoodMenu
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import coil.compose.rememberImagePainter
 import com.example.composesfo.R
+import com.example.composesfo.domain.model.Food
 import com.example.composesfo.presentation.component.MultiFabState
 import com.example.composesfo.presentation.component.noRippleClickable
 import com.example.composesfo.presentation.navigation.Screen
@@ -30,6 +39,7 @@ fun AdminFoodMenuScreen(
 ) {
     val stateCategory = viewModel.stateGetCategories.value
     val categoryList = viewModel.getCategoryList(viewModel.categoryList)
+    val state = viewModel.stateFoods.value
     var toState by remember { mutableStateOf(MultiFabState.COLLAPSED) }
     Scaffold(
         topBar = {
@@ -206,6 +216,15 @@ fun AdminFoodMenuScreen(
                     onTabIndexChange = viewModel::onTabIndexChange,
                     onTypeChange = viewModel::onTypeChange
                 )
+
+                val categoryFoodList = viewModel.getCategoryFoodList(
+                    viewModel.selectedCategory,
+                    stateCategory.categoryList
+                )
+                FoodList(
+                    foods = viewModel.getFoodListByCategory(categoryFoodList, state.foods),
+                    navController = navController
+                )
             }
         }
         /*val alpha = if (toState == MultiFabState.EXPANDED) 0.4f else 0f
@@ -262,6 +281,81 @@ fun TypeList(
                 )
             }
         }
+    }
+}
+
+@Composable
+fun FoodList(
+    foods: List<Food>,
+    navController: NavController
+) {
+    LazyColumn(modifier = Modifier.fillMaxWidth()) {
+        items(foods) { food ->
+            FoodItem(
+                food = food,
+                onItemClick = {
+                    navController.navigate(route = Screen.AdminEditFoodScreen.route + "/${it.id}")
+                }
+            )
+        }
+    }
+}
+
+@Composable
+fun FoodItem(
+    food: Food,
+    onItemClick: (Food) -> Unit
+) {
+    Column(modifier = Modifier.fillMaxWidth()) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .noRippleClickable(onClick = { onItemClick(food) })
+        ) {
+            val painter = rememberImagePainter(
+                data = food.food_image_url,
+                builder = {
+                    //placeholder(R.drawable.ic_image_placeholder)
+                    crossfade(500)
+                }
+            )
+            Image(
+                painter = painter,
+                contentDescription = stringResource(R.string.food_image),
+                contentScale = ContentScale.Crop,
+                modifier = Modifier
+                    .height(80.dp)
+                    .width(120.dp)
+                    .padding(vertical = 10.dp, horizontal = 16.dp)
+                    .padding(0.dp)
+            )
+
+            Column(
+                verticalArrangement = Arrangement.spacedBy(10.dp)
+            ) {
+                Text(
+                    text = food.food_name,
+                    textAlign = TextAlign.Center,
+                    fontSize = 24.sp,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.padding(top = 10.dp)
+                )
+
+                Text(
+                    text = "RM ${food.food_price}.00",
+                    textAlign = TextAlign.Center,
+                    fontSize = 18.sp
+                )
+            }
+        }
+        Divider(
+            color = Color.LightGray,
+            modifier = Modifier.padding(
+                top = 10.dp,
+                start = 16.dp,
+                end = 16.dp
+            )
+        )
     }
 }
 

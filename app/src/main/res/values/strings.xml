@@ -54,6 +54,34 @@
     <string name="answer_1">Answer 1</string>
     <string name="answer_2">Answer 2</string>
     <string name="set_questions">Set Questions</string>
+
+    <!--Security Questions-->
+    <string name="question_one">What is your date of birth?</string>
+    <string name="question_two">What was your favorite school teacher’s name?</string>
+    <string name="question_three">What’s your favorite movie?</string>
+    <string name="question_four">What was your first car?</string>
+    <string name="question_five">What city were you born in?</string>
+    <string name="question_six">In what city or town did your parents meet?</string>
+    <string name="question_seven">What is the name of your favorite pet?</string>
+    <string name="question_eight">What is the name of your first school?</string>
+    <string name="question_nine">What is your favorite food?</string>
+    <string name="question_ten">What is the first name of your first boyfriend/girlfriend?</string>
+    <string name="question_eleven">What is your favorite sports team?</string>
+
+    <string-array name="question_list">
+        <item>@string/question_one</item>
+        <item>@string/question_two</item>
+        <item>@string/question_three</item>
+        <item>@string/question_four</item>
+        <item>@string/question_five</item>
+        <item>@string/question_six</item>
+        <item>@string/question_seven</item>
+        <item>@string/question_eight</item>
+        <item>@string/question_nine</item>
+        <item>@string/question_ten</item>
+        <item>@string/question_eleven</item>
+    </string-array>
+
     <string name="order_no">Order No</string>
     <string name="order_details">Order Details</string>
     <string name="time">Time</string>
