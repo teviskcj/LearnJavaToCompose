@@ -163,11 +163,7 @@ fun AdminEditFoodScreen(
                     },
                     colors = ButtonDefaults.buttonColors(backgroundColor = orange),
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(
-                            top = 30.dp,
-                            bottom = 34.dp
-                        ),
+                        .fillMaxWidth(),
                     shape = RoundedCornerShape(14.dp)
                 ) {
                     Text(
@@ -178,19 +174,24 @@ fun AdminEditFoodScreen(
                     )
                 }
 
-                Spacer(modifier = Modifier.height(10.dp))
+                Spacer(modifier = Modifier.height(20.dp))
 
                 Button(
                     onClick = {
-
+                        food?.run {
+                            viewModel.deleteFood(id)
+                        }
+                        viewModel.stateDelete.value.id?.run {
+                            navController.navigate(route = Screen.AdminFoodMenuScreen.route) {
+                                popUpTo(Screen.AdminHomeScreen.route) {
+                                    inclusive = true
+                                }
+                            }
+                        }
                     },
                     colors = ButtonDefaults.buttonColors(backgroundColor = red),
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(
-                            top = 30.dp,
-                            bottom = 34.dp
-                        ),
+                        .fillMaxWidth(),
                     shape = RoundedCornerShape(14.dp)
                 ) {
                     Text(

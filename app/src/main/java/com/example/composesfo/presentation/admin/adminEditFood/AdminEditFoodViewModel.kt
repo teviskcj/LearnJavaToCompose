@@ -12,6 +12,7 @@ import com.example.composesfo.common.Resource
 import com.example.composesfo.data.remote.dto.FoodDto
 import com.example.composesfo.domain.useCase.foodUseCase.FoodUseCase
 import com.example.composesfo.presentation.admin.adminAddFood.AddFoodState
+import com.example.composesfo.presentation.component.DeleteState
 import com.example.composesfo.presentation.foodDetails.FoodDetailsState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
@@ -28,6 +29,9 @@ class AdminEditFoodViewModel @Inject constructor(
 
     private val _stateEdit = mutableStateOf(AddFoodState())
     val stateAdd: State<AddFoodState> = _stateEdit
+
+    private val _stateDelete = mutableStateOf(DeleteState())
+    val stateDelete: State<DeleteState> = _stateDelete
 
     var name by mutableStateOf("")
         private set
@@ -73,6 +77,22 @@ class AdminEditFoodViewModel @Inject constructor(
                 }
                 is Resource.Loading -> {
                     _stateEdit.value = AddFoodState(isLoading = true)
+                }
+            }
+        }.launchIn(viewModelScope)
+    }
+
+    fun deleteFood(foodId: String) {
+        foodUseCase.deleteFoodUseCase(foodId).onEach { result ->
+            when(result) {
+                is Resource.Success -> {
+                    _stateDelete.value = DeleteState(id = result.data)
+                }
+                is Resource.Error -> {
+                    _stateDelete.value = DeleteState(error = result.message ?: "An unexpected error occurred")
+                }
+                is Resource.Loading -> {
+                    _stateDelete.value = DeleteState(isLoading = true)
                 }
             }
         }.launchIn(viewModelScope)

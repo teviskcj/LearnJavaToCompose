@@ -9,4 +9,6 @@ interface FoodRepository {
     suspend fun getFoodById(foodId: String): FoodDto
 
     suspend fun createFood(foodId: String, foodDto: FoodDto)
+
+    suspend fun deleteFood(foodId: String)
 }

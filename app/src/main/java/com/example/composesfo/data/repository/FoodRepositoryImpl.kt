@@ -19,4 +19,8 @@ class FoodRepositoryImpl @Inject constructor(
     override suspend fun createFood(foodId: String, foodDto: FoodDto) {
         return api.createFood(foodId, foodDto)
     }
+
+    override suspend fun deleteFood(foodId: String) {
+        return api.deleteFood(foodId)
+    }
 }

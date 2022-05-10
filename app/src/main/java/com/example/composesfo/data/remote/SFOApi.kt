@@ -1,5 +1,6 @@
 package com.example.composesfo.data.remote
 
+import com.example.composesfo.common.Constants
 import com.example.composesfo.data.remote.dto.*
 import retrofit2.http.*
 
@@ -20,29 +21,32 @@ interface SFOApi {
     @GET("/Users/{userId}/Security Questions.json")
     suspend fun getQuestionById(@Path("userId") userId: String): QuestionDto
 
-    @PUT("/Food_Categories/{categoryId}.json")
-    suspend fun createCategory(@Path("categoryId") categoryId: String, @Body foodCategoryDto: FoodCategoryDto)
+    @PUT(Constants.URL_FOOD_CATEGORY)
+    suspend fun createCategory(@Path(Constants.PARAM_CATEGORY_ID) categoryId: String, @Body foodCategoryDto: FoodCategoryDto)
 
-    @GET("/Food_Categories/.json")
+    @GET(Constants.URL_FOOD_CATEGORIES)
     suspend fun getCategoryList(): Map<String, FoodCategoryDto>
 
-    @GET("/Food_Categories/{categoryId}.json")
-    suspend fun getCategoryById(@Path("categoryId") categoryId: String): FoodCategoryDto
+    @GET(Constants.URL_FOOD_CATEGORY)
+    suspend fun getCategoryById(@Path(Constants.PARAM_CATEGORY_ID) categoryId: String): FoodCategoryDto
 
-    @DELETE("/Food_Categories/{categoryId}.json")
-    suspend fun deleteFoodCategory(@Path("categoryId") categoryId: String)
+    @DELETE(Constants.URL_FOOD_CATEGORY)
+    suspend fun deleteFoodCategory(@Path(Constants.PARAM_CATEGORY_ID) categoryId: String)
 
     /*@GET("/Food_Categories/.json")
     suspend fun getCategory(): Call<Map<String, FoodCategoryDto>>*/
 
-    @GET("/Foods/.json")
+    @GET(Constants.URL_FOODS)
     suspend fun getFoods(): Map<String, FoodDto>
 
-    @GET("/Foods/{foodId}.json")
-    suspend fun getFoodById(@Path("foodId") foodId: String): FoodDto
+    @GET(Constants.URL_FOOD)
+    suspend fun getFoodById(@Path(Constants.PARAM_FOOD_ID) foodId: String): FoodDto
 
-    @PUT("/Foods/{foodId}.json")
-    suspend fun createFood(@Path("foodId") foodId: String, @Body foodDto: FoodDto)
+    @PUT(Constants.URL_FOOD)
+    suspend fun createFood(@Path(Constants.PARAM_FOOD_ID) foodId: String, @Body foodDto: FoodDto)
+
+    @DELETE(Constants.URL_FOOD)
+    suspend fun deleteFood(@Path(Constants.PARAM_FOOD_ID) foodId: String)
 
     @PUT("/Cart List/User View/{userId}/Foods/{foodId}.json")
     suspend fun createCart(@Path("userId") userId: String, @Path("foodId") foodId: String, @Body cartDto: CartDto)
