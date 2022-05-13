@@ -1,7 +1,11 @@
 package com.example.composesfo.presentation.foodMenu
 
-import androidx.compose.foundation.*
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.ScrollState
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
@@ -10,7 +14,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.*
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
@@ -24,12 +30,14 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import coil.compose.rememberImagePainter
 import com.example.composesfo.R
+import com.example.composesfo.data.remote.dto.FoodCategoryDto
 import com.example.composesfo.domain.model.Food
 import com.example.composesfo.presentation.component.noRippleClickable
 import com.example.composesfo.presentation.navigation.Screen
 import com.example.composesfo.presentation.ui.theme.AllButton
 import com.example.composesfo.presentation.ui.theme.frameColor
 import kotlinx.coroutines.CoroutineScope
+import kotlin.math.roundToInt
 
 @Composable
 fun MenuScreen(
@@ -37,13 +45,28 @@ fun MenuScreen(
     viewModel: FoodListViewModel = hiltViewModel()
 ) {
     val state = viewModel.state.value
+    val stateCategory = viewModel.stateCategory.value
+    val categoryList = viewModel.getCategoryList(viewModel.categoryList)
+    val categoryFoodList = viewModel.getCategoryFoodList(
+        viewModel.stateType,
+        stateCategory.categoryList
+    )
+
     val foodTypeList = viewModel.stateList
     val scrollState = rememberScrollState()
+    val listState = rememberLazyListState()
     val coroutineScope = rememberCoroutineScope()
 
     if (scrollState.isScrollInProgress) {
         viewModel.changeTypeByScrollPosition(
             currentValue = scrollState.value,
+            maxValue = scrollState.maxValue
+        )
+    }
+
+    if (listState.isScrollInProgress) {
+        viewModel.changeTypeByScrollPosition(
+            currentValue = listState.firstVisibleItemScrollOffset,
             maxValue = scrollState.maxValue
         )
     }
@@ -57,21 +80,26 @@ fun MenuScreen(
             TopAppBarHeader()
             Spacer(modifier = Modifier.padding(10.dp))
             TypeList(
-                list = foodTypeList,
+                list = categoryList,
                 getColor = viewModel::getColor,
                 onTypeChange = viewModel::onTypeChange,
                 scrollState = scrollState,
                 coroutineScope = coroutineScope,
-                scrollToType = viewModel::scrollToByType
+                scrollToType = viewModel::scrollToByType,
+                listState = listState,
+                scrollToCategory = viewModel::scrollToByCategory
             )
             Spacer(modifier = Modifier.padding(20.dp))
             FoodListByType(
                 types = foodTypeList,
+                categoryList = stateCategory.categoryList,
                 foods = state.foods,
                 navController = navController,
                 getFoodListByType = viewModel::getFoodListByType,
+                getFoodListByCategory = viewModel::getFoodListByCategory,
                 scrollState = scrollState,
-                checkType = viewModel::addTypePositionList
+                checkType = viewModel::addTypePositionList,
+                listState = listState
             )
 
             IsStateError(state.error)
@@ -105,7 +133,9 @@ fun TypeList(
     onTypeChange: (String) -> Unit,
     scrollState: ScrollState,
     coroutineScope: CoroutineScope,
-    scrollToType: (CoroutineScope,ScrollState) -> Unit
+    scrollToType: (CoroutineScope,ScrollState) -> Unit,
+    listState: LazyListState,
+    scrollToCategory: (CoroutineScope,LazyListState) -> Unit
 ) {
 
     Row(
@@ -125,7 +155,8 @@ fun TypeList(
                     modifier = Modifier
                         .noRippleClickable {
                             onTypeChange(text)
-                            scrollToType(coroutineScope,scrollState)
+                            //scrollToType(coroutineScope,scrollState)
+                            scrollToCategory(coroutineScope,listState)
                         }
                 )
                 Box(
@@ -148,18 +179,67 @@ fun TypeList(
 @Composable
 fun FoodListByType(
     types: List<String>,
+    categoryList: List<FoodCategoryDto>,
     foods: List<Food>,
     navController: NavController,
     getFoodListByType: (String, List<Food>) -> List<Food>,
+    getFoodListByCategory: (List<String>, List<Food>) -> List<Food>,
     scrollState: ScrollState,
-    checkType: (String,Int) -> Unit
+    checkType: (String,Int) -> Unit,
+    listState: LazyListState
 ) {
-    Column(
+    LazyColumn(state = listState) {
+        items(categoryList, key = { it }) { category ->
+            FoodList(
+                foods = getFoodListByCategory(category.foods, foods),
+                navController = navController,
+                type = category.category_name,
+                category = category,
+                checkType = checkType
+            )
+        }
+        itemsIndexed(items = categoryList, itemContent = { index, category ->
+
+
+
+            FoodList(
+                foods = getFoodListByCategory(category.foods, foods),
+                navController = navController,
+                type = category.category_name,
+                category = category,
+                checkType = checkType
+            )
+        })
+        categoryList.forEach {
+            item {
+                FoodList(
+                    foods = getFoodListByCategory(it.foods, foods),
+                    navController = navController,
+                    type = it.category_name,
+                    category = it,
+                    checkType = checkType
+                )
+            }
+
+        }
+    }
+    /*Column(
         modifier = Modifier
             .fillMaxWidth()
             .verticalScroll(scrollState)
     ) {
-        types.forEach {
+        categoryList.forEach {
+            //val list = getFoodListByType(it, foods)
+            FoodList(
+                foods = getFoodListByCategory(it.foods, foods),
+                navController = navController,
+                type = it.category_name,
+                category = it,
+                checkType = checkType
+            )
+        }
+
+        *//*types.forEach {
             val list = getFoodListByType(it, foods)
             FoodList(
                 foods = list,
@@ -167,8 +247,8 @@ fun FoodListByType(
                 type = it,
                 checkType = checkType
             )
-        }
-    }
+        }*//*
+    }*/
 }
 
 @Composable
@@ -176,11 +256,45 @@ fun FoodList(
     foods: List<Food>,
     navController: NavController,
     type: String,
+    category: FoodCategoryDto,
     checkType: (String,Int) -> Unit
 ) {
 
     Card(modifier = Modifier.fillMaxWidth()) {
-        Column {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 10.dp, horizontal = 16.dp)
+                .onGloballyPositioned { layoutCoordinates ->
+                    checkType(
+                        category.category_name,
+                        layoutCoordinates.positionInRoot().y.roundToInt()
+                    )
+                },
+            verticalArrangement = Arrangement.spacedBy(10.dp)
+        ) {
+
+            Text(
+                text = category.category_name,
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold
+            )
+
+            Text(
+                text = category.category_description,
+                fontSize = 15.sp
+            )
+
+            foods.forEach { food ->
+                FoodListItem(
+                    food = food,
+                    onItemClick = {
+                        navController.navigate(route = Screen.FoodDetailsScreen.route + "/${it.food_name}")
+                    }
+                )
+            }
+        }
+        /*Column {
             when (type) {
                 "Popular" -> PopularListHeader(
                     type = type,
@@ -205,7 +319,7 @@ fun FoodList(
                     }
                 )
             }
-        }
+        }*/
     }
     Spacer(modifier = Modifier.padding(10.dp))
 }
@@ -255,7 +369,7 @@ fun FoodListHeader(
             .fillMaxWidth()
             .padding(vertical = 10.dp, horizontal = 16.dp)
             .onGloballyPositioned { layoutCoordinates ->
-                checkType(type,layoutCoordinates.positionInRoot().y.toInt())
+                checkType(type, layoutCoordinates.positionInRoot().y.toInt())
             },
         verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {

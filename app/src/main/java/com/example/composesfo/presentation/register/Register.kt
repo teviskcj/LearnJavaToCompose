@@ -2,7 +2,10 @@ package com.example.composesfo.presentation.register
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.*
+import androidx.compose.material.Button
+import androidx.compose.material.Scaffold
+import androidx.compose.material.Text
+import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
@@ -210,7 +213,9 @@ fun RegisterForm(
                         }
                     }
                 }
-
+                navController.navigate(route = Screen.HomeScreen.route) {
+                    navController.backQueue.clear()
+                }
             },
             modifier = Modifier
                 .height(60.dp)
